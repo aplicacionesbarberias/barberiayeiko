@@ -214,7 +214,12 @@
     .toggle[aria-expanded="true"] .toggle-icon { transform: rotate(180deg); }
     .toggle.oscuro { background: transparent; color: var(--oro); border-color: var(--linea); border-radius: 12px; box-shadow: none; }
 
-    .reserva-contenido { margin-top: 1rem; }
+    .reserva-contenido { margin-top: 0.6rem; }
+    .reserva-panel { scroll-margin-top: 80px; }
+    .reserva-encabezado { text-align: center; }
+    .reserva-titulo { justify-content: center; margin: 0.4rem 0 0.2rem; font-size: 1.6rem; }
+    .reserva-titulo::after { display: none; }
+    .reserva-sub { color: var(--gris); font-size: 0.95rem; }
     .gate-msg { color: var(--gris); margin-bottom: 1.2rem; }
     .gate-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .gate-actions .btn { flex: 1 1 180px; width: auto; }
@@ -534,13 +539,13 @@
       <div class="mis-citas" id="mis-citas-aviso" role="status" hidden></div>
 
       <!-- RESERVAR CITA -->
-      <div class="reserva-panel">
-        <button type="button" class="toggle" id="btn-reserva-toggle" aria-expanded="false" aria-controls="reserva-contenido">
-          <span><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Reservar cita</span>
-          <i class="fa-solid fa-chevron-down toggle-icon" aria-hidden="true"></i>
-        </button>
+      <div class="reserva-panel" id="reserva-panel">
+        <div class="reserva-encabezado">
+          <h2 class="reserva-titulo"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Reservar cita</h2>
+          <p class="reserva-sub">Elige tu corte y tu horario.</p>
+        </div>
 
-        <div class="reserva-contenido" id="reserva-contenido" hidden>
+        <div class="reserva-contenido" id="reserva-contenido">
           <div class="caja" id="reserva-login">
             <p class="gate-msg">Para reservar necesitas una cuenta. Así tu turno queda a tu nombre y te llegan los avisos.</p>
             <div class="gate-actions">
@@ -881,9 +886,12 @@
 
     // Servicios que el cliente elige al reservar. ⚠ PON AQUÍ LOS PRECIOS REALES DE YEIKO.
     const SERVICIOS = {
-      corte_barba:   { nombre: "Corte con barba", precio: 20000 },
-      corte_general: { nombre: "Corte general",   precio: 18000 },
-      corte_parejo:  { nombre: "Corte parejo",    precio: 14000 }
+      corte_mascarilla_corona: { nombre: "Corte con mascarilla y corona", precio: 25000 },
+      corte_mascarilla:        { nombre: "Corte más mascarilla",          precio: 23000 },
+      corte_nino:              { nombre: "Corte niño",                    precio: 17000 },
+      corte_nino_mayor12:      { nombre: "Corte niño mayor de 12 años",   precio: 20000 },
+      corte_barba:             { nombre: "Corte y barba",                 precio: 25000 },
+      corte_tinte:             { nombre: "Corte más tinte completo",      precio: 35000 }
     };
 
     // Se muestran en "Otros servicios"; no se reservan por la app. Vacío = la sección no aparece.
@@ -1359,7 +1367,7 @@
       reservando: false,
       misCitasLista: [],
       vista: 'cliente',
-      reservaAbierta: false,
+      reservaAbierta: true,   // "Reservar cita" siempre visible, sin tener que tocar nada
       listo: false,
       ocupadosAlDia: false  // true cuando la disponibilidad ya llegó del servidor
     };
@@ -1405,16 +1413,9 @@
 
     function actualizarPanelReserva() {
       $('reserva-contenido').hidden = !estado.reservaAbierta;
-      $('btn-reserva-toggle').setAttribute('aria-expanded', String(estado.reservaAbierta));
       asegurarDisponibilidad();
     }
 
-    function alternarPanelReserva() {
-      estado.reservaAbierta = !estado.reservaAbierta;
-      // Si quedó la tarjeta de confirmación, al cerrar y abrir vuelve el formulario limpio.
-      if (!estado.reservaAbierta && !$('confirmacion').hidden) cerrarConfirmacion();
-      actualizarPanelReserva();
-    }
 
     // La disponibilidad se carga solo cuando alguien abre "Reservar cita".
     function asegurarDisponibilidad() {
@@ -1559,11 +1560,12 @@
       $('cliente-telefono').value = usuario && usuario.telefono ? '+' + usuario.telefono : '';
       cerrarConfirmacion();
       if (usuario) {
-        if (estado.vista === 'login' && !usuario.esBarbero) {
-          estado.reservaAbierta = true; // venía de "Reservar cita": se le deja abierto
-          actualizarPanelReserva();
-        }
+        const veniaDeIngresar = estado.vista === 'login';
         mostrarVista(usuario.esBarbero ? 'barbero' : 'cliente');
+        // El cliente que acaba de entrar queda directo en "Reservar cita".
+        if (veniaDeIngresar && !usuario.esBarbero) {
+          setTimeout(() => $('reserva-panel').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+        }
       } else {
         mostrarVista(estado.vista === 'barbero' ? 'cliente' : estado.vista);
       }
@@ -2751,7 +2753,6 @@
         try { await Store.logout(); } catch (err) { console.error(err); avisar('No se pudo cerrar sesión.', 'error'); }
       });
 
-      $('btn-reserva-toggle').addEventListener('click', alternarPanelReserva);
       $('btn-clientes-toggle').addEventListener('click', alternarClientes);
 
       document.querySelectorAll('.auth-tab').forEach(b => b.addEventListener('click', () => abrirAcceso(b.dataset.auth)));
