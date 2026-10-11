@@ -136,6 +136,13 @@
     .btn-instalar:hover { background: var(--oro); color: var(--negro); border-style: solid; }
     .pasos-ios { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.4rem; }
     .pasos-ios i { width: 1.2em; text-align: center; }
+    .texto-semana { margin: -0.2rem 0 0.7rem; font-size: 0.82rem; }
+    .volver-inicio-wrap { text-align: center; margin: 0.5rem 0 1rem; }
+    .volver-inicio {
+      background: transparent; border: 1px solid var(--linea); color: var(--oro);
+      padding: 10px 20px; border-radius: 999px; cursor: pointer; font-size: 0.9rem; font-weight: 500;
+    }
+    .volver-inicio:hover { border-color: var(--oro); }
     .hero-texto { max-width: 34rem; margin: 1.4rem auto 1.6rem; color: #ddd5c4; font-size: 1rem; }
 
     /* ---------- Tu cita programada ---------- */
@@ -532,7 +539,7 @@
         <button type="button" class="btn-instalar" id="btn-instalar" hidden>
           <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Descargar la app en tu celular
         </button>
-        <p class="hero-texto">Cortes con estilo y con detalle. Elige tu corte, el día y la hora, y llega tranquilo: tu turno queda a tu nombre.</p>
+        <p class="hero-texto">Aquí cada corte se hace para salir con corona. Escoge tu estilo, aparta tu hora y llega directo a la silla: sin filas, sin esperas, con el sello de Yeiko.</p>
       </div>
 
       <!-- TU CITA PROGRAMADA (aparece sola cuando el cliente tiene citas) -->
@@ -573,6 +580,7 @@
 
               <div class="form-group">
                 <span class="etiqueta" id="lbl-dias"><i class="fa-solid fa-calendar" aria-hidden="true"></i> Día</span>
+                <p class="hint texto-semana" id="texto-semana" hidden></p>
                 <div class="dia-strip-wrap">
                   <button type="button" class="dia-flecha dia-flecha-izq" id="dias-prev" aria-label="Ver días anteriores" hidden>‹</button>
                   <div class="dia-strip" id="dia-strip" role="group" aria-labelledby="lbl-dias">
@@ -629,7 +637,7 @@
       <!-- HORARIO -->
       <h2>Horario</h2>
       <div id="lista-horario"><p class="hint">Cargando horario…</p></div>
-      <p class="hint" style="margin-top: 0.9rem;">Cada turno dura una hora: la última cita del día empieza una hora antes del cierre. Los festivos no atendemos, salvo que el barbero lo habilite (si es así, aparece disponible al reservar).</p>
+
 
       <!-- OTROS SERVICIOS (se oculta si la lista está vacía) -->
       <div id="sec-otros">
@@ -639,6 +647,12 @@
       </div>
 
       <div class="social-links" id="social-links"></div>
+
+      <div class="volver-inicio-wrap">
+        <button type="button" class="volver-inicio" id="btn-volver-inicio">
+          <i class="fa-solid fa-arrow-up" aria-hidden="true"></i> Volver al inicio
+        </button>
+      </div>
     </section>
 
     <!-- ================= PANEL DEL BARBERO ================= -->
@@ -997,6 +1011,20 @@
       if (festivoCerrado(barberoId, fecha)) return [];
       const dia = new Date(fecha + 'T12:00:00').getDay();
       return (horarioDe(barberoId)[dia] || []).slice().sort();
+    }
+
+    // AGENDA POR SEMANA (lunes a domingo).
+    // Se puede reservar solo en la semana actual. La semana siguiente se abre el domingo,
+    // a la hora del último turno de ese domingo (la base de datos aplica la misma regla).
+    function semanaAbierta(barberoId) {
+      const hoy = fechaLocal();
+      const dow = new Date(hoy + 'T12:00:00').getDay(); // 0 = domingo
+      let domingo = sumarDias(hoy, dow === 0 ? 0 : 7 - dow);
+      const turnosDomingo = (horarioDe(barberoId)[0] || []).slice().sort();
+      const ultimoDomingo = turnosDomingo[turnosDomingo.length - 1] || '00:00';
+      if (dow === 0 && horaPasada(hoy, ultimoDomingo)) domingo = sumarDias(domingo, 7);
+      const lunes = sumarDias(domingo, -6);
+      return { desde: lunes > hoy ? lunes : hoy, hasta: domingo, abreSiguiente: ultimoDomingo };
     }
 
     // "13:20" -> "1:20 p. m."
@@ -1823,9 +1851,13 @@
 
       const hoy = fechaLocal();
       const elegida = $('select-fecha').value;
+      const semana = semanaAbierta(barberoId);
+      const domingoTxt = formatoFechaLarga(semana.hasta).replace(/^Domingo,?\s*/i, '');
+      $('texto-semana').textContent =
+        `Agenda abierta hasta el domingo ${domingoTxt}. La próxima semana se abre ese domingo a las ${formatoHora(semana.abreSiguiente)}`;
+      $('texto-semana').hidden = false;
 
-      for (let i = 0; i < DIAS_PARA_RESERVAR; i++) {
-        const fecha = sumarDias(hoy, i);
+      for (let fecha = semana.desde, i = 0; fecha <= semana.hasta; fecha = sumarDias(fecha, 1), i++) {
         const d = new Date(fecha + 'T12:00:00');
         const horasDia = horasDelDia(barberoId, fecha);
         const cerrado = horasDia.length === 0 || diaBloqueado(barberoId, fecha);
@@ -1844,7 +1876,7 @@
         btn.setAttribute('aria-label', `${formatoFechaLarga(fecha)}, ${estadoTexto}`);
         btn.setAttribute('aria-pressed', String(fecha === elegida));
         btn.append(
-          el('span', 'dia-card-abrev', i === 0 ? 'Hoy' : DIAS_ABREV[d.getDay()]),
+          el('span', 'dia-card-abrev', fecha === hoy ? 'Hoy' : DIAS_ABREV[d.getDay()]),
           el('span', 'dia-card-num', String(d.getDate())),
           el('span', 'dia-card-estado', estadoTexto)
         );
@@ -2816,6 +2848,7 @@
       $('btn-respaldo').addEventListener('click', descargarRespaldo);
 
       $('btn-instalar').addEventListener('click', instalarApp);
+      $('btn-volver-inicio').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
       $('btn-ios-cerrar').addEventListener('click', () => $('dlg-ios').close());
       $('btn-android-cerrar').addEventListener('click', () => $('dlg-android').close());
       $('btn-android-listo').addEventListener('click', () => {
