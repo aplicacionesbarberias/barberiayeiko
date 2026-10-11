@@ -291,6 +291,8 @@
     }
     .slot-btn:hover:not(:disabled) { border-color: var(--oro); }
     .slot-btn.selected { background: var(--degradado); color: var(--negro); font-weight: 700; border-color: var(--oro); }
+    .slots-grid.slots-anchos { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+    .badge-domicilio { border: 1px solid var(--oro); color: var(--oro); display: inline-flex; gap: 4px; align-items: center; }
     .slot-btn.blocked { background: #151412; color: #5f5a50; text-decoration: line-through; cursor: not-allowed; }
 
     /* ---------- Tarjeta de cita confirmada ---------- */
@@ -905,7 +907,9 @@
       corte_nino:              { nombre: "Corte niño",                    precio: 17000 },
       corte_nino_mayor12:      { nombre: "Corte niño mayor de 12 años",   precio: 20000 },
       corte_barba:             { nombre: "Corte y barba",                 precio: 25000 },
-      corte_tinte:             { nombre: "Corte más tinte completo",      precio: 35000 }
+      corte_tinte:             { nombre: "Corte más tinte completo",      precio: 35000 },
+      // turnos: 2 = ocupa 2 horas seguidas. El id "domicilio" también lo usa la base de datos.
+      domicilio:               { nombre: "Servicio a domicilio (2 horas)", precio: 40000, turnos: 2 }
     };
 
     // Se muestran en "Otros servicios"; no se reservan por la app. Vacío = la sección no aparece.
@@ -1027,6 +1031,23 @@
       return { desde: lunes > hoy ? lunes : hoy, hasta: domingo, abreSiguiente: ultimoDomingo };
     }
 
+    // Citas de varias horas (domicilio = 2 horas seguidas).
+    const turnosDe = servicio => (SERVICIOS[servicio] && SERVICIOS[servicio].turnos) || 1;
+    const horasCubiertas = (hora, turnos) =>
+      Array.from({ length: turnos }, (_, i) => sumarMinutos(hora, i * DURACION_TURNO_MIN));
+    // "3:00 p. m." o, si dura más de un turno, "3:00 p. m. – 5:00 p. m."
+    const textoHoraCita = (hora, turnos = 1) => turnos > 1
+      ? `${formatoHora(hora)} – ${formatoHora(sumarMinutos(hora, turnos * DURACION_TURNO_MIN))}`
+      : formatoHora(hora);
+    // Horas donde puede EMPEZAR una cita de N turnos: todas sus horas seguidas, libres y dentro del horario.
+    function iniciosLibres(barberoId, fecha, turnos) {
+      const horas = horasDelDia(barberoId, fecha);
+      const delDia = new Set(horas);
+      const ocupadas = horasOcupadas(barberoId, fecha);
+      return horas.filter(h => !horaPasada(fecha, h) &&
+        horasCubiertas(h, turnos).every(x => delDia.has(x) && !ocupadas.has(x)));
+    }
+
     // "13:20" -> "1:20 p. m."
     function formatoHora(h) {
       const [H, M] = h.split(':').map(Number);
@@ -1142,7 +1163,7 @@
         id: r.id, uid: r.uid, barberoId: r.barbero_id, fecha: r.fecha, hora: r.hora,
         servicio: r.servicio, servicioNombre: r.servicio_nombre,
         clienteNombre: r.cliente_nombre, clienteTelefono: r.cliente_telefono, clienteEmail: r.cliente_email,
-        estado: r.estado, creadaEn: r.creada_en
+        estado: r.estado, creadaEn: r.creada_en, turnos: r.turnos || 1
       });
 
       // Carga los datos y los mantiene al día: tiempo real + al volver a la pestaña + cada cierto tiempo.
@@ -1532,7 +1553,7 @@
         chip.append(el('small', null, c.fecha === fechaLocal() ? 'Hoy' : DIAS_ABREV[d.getDay()]), el('b', null, String(d.getDate())),
           el('small', null, d.toLocaleDateString('es-CO', { month: 'short' }).replace('.', '')));
         const det = el('div', 'detalle');
-        det.append(el('strong', null, `${formatoHora(c.hora)} · ${formatoFechaLarga(c.fecha)}`));
+        det.append(el('strong', null, `${textoHoraCita(c.hora, c.turnos)} · ${formatoFechaLarga(c.fecha)}`));
         const serv = nombreServicio(c);
         det.append(`${serv ? serv + ' con ' : 'Con '}${nombreBarbero(c.barberoId)}`);
         item.append(chip, det);
@@ -1728,6 +1749,12 @@
         input.value = id;
         const caja = el('span');
         caja.append(el('b', null, s.nombre), el('span', null, formatoPrecio(s.precio)));
+        input.addEventListener('change', () => {
+          estado.horaSel = '';
+          $('datos-cliente-wrap').hidden = true;
+          renderDiaStrip();
+          renderHorarios();
+        });
         lab.append(input, caja);
         cont.appendChild(lab);
       });
@@ -1852,6 +1879,7 @@
       const hoy = fechaLocal();
       const elegida = $('select-fecha').value;
       const semana = semanaAbierta(barberoId);
+      const turnosSel = turnosDe(servicioElegido());
       const domingoTxt = formatoFechaLarga(semana.hasta).replace(/^Domingo,?\s*/i, '');
       $('texto-semana').textContent =
         `Agenda abierta hasta el domingo ${domingoTxt}. La próxima semana se abre ese domingo a las ${formatoHora(semana.abreSiguiente)}`;
@@ -1864,15 +1892,15 @@
 
         let libres = 0;
         if (!cerrado) {
-          const ocupadas = horasOcupadas(barberoId, fecha);
-          libres = horasDia.filter(h => !ocupadas.has(h) && !horaPasada(fecha, h)).length;
+          libres = iniciosLibres(barberoId, fecha, turnosSel).length;
         }
         const sinCupos = !cerrado && libres === 0;
 
         const btn = el('button', 'dia-card' + (fecha === elegida ? ' seleccionado' : ''));
         btn.type = 'button';
         btn.disabled = cerrado || sinCupos;
-        const estadoTexto = festivoCerrado(barberoId, fecha) ? 'Festivo' : cerrado ? 'Cerrado' : sinCupos ? 'Lleno' : `${libres} libre${libres === 1 ? '' : 's'}`;
+        const estadoTexto = festivoCerrado(barberoId, fecha) ? 'Festivo' : cerrado ? 'Cerrado' : sinCupos ? (turnosSel > 1 ? 'Sin domicilio' : 'Lleno')
+          : turnosSel > 1 ? 'Disponible' : `${libres} libre${libres === 1 ? '' : 's'}`;
         btn.setAttribute('aria-label', `${formatoFechaLarga(fecha)}, ${estadoTexto}`);
         btn.setAttribute('aria-pressed', String(fecha === elegida));
         btn.append(
@@ -1927,16 +1955,24 @@
         return;
       }
 
-      const ocupadas = horasOcupadas(barberoId, fecha);
-      if (estado.horaSel && ocupadas.has(estado.horaSel)) {
+      const turnos = turnosDe(servicioElegido());
+      const validos = new Set(iniciosLibres(barberoId, fecha, turnos));
+      if (estado.horaSel && !validos.has(estado.horaSel)) {
         estado.horaSel = '';
         if (!estado.reservando) avisar('Esa hora acaba de ser tomada. Elige otra.', 'error');
       }
 
-      horas.forEach(hora => {
-        const btn = el('button', 'slot-btn', formatoHora(hora));
+      // Domicilio: solo se muestran las horas donde caben 2 horas seguidas.
+      grid.classList.toggle('slots-anchos', turnos > 1);
+      const lista = turnos > 1 ? [...validos] : horas;
+      if (turnos > 1 && lista.length === 0) {
+        return sinHoras('Este día no hay 2 horas seguidas libres para el domicilio. Elige otro día.');
+      }
+
+      lista.forEach(hora => {
+        const btn = el('button', 'slot-btn', textoHoraCita(hora, turnos));
         btn.type = 'button';
-        if (ocupadas.has(hora) || horaPasada(fecha, hora)) {
+        if (!validos.has(hora)) {
           btn.classList.add('blocked');
           btn.disabled = true;
           btn.setAttribute('aria-label', `${formatoHora(hora)}, no disponible`);
@@ -1956,7 +1992,11 @@
 
             // Doble revisión con el servidor: si otra persona la tomó hace un momento, se avisa ya.
             let libre = true;
-            try { libre = await Store.horaLibre(barberoId, fecha, hora); } catch (e) { /* sin conexión: la reserva igual lo valida */ }
+            try {
+              for (const h of horasCubiertas(hora, turnos)) {
+                if (!(await Store.horaLibre(barberoId, fecha, h))) { libre = false; break; }
+              }
+            } catch (e) { /* sin conexión: la reserva igual lo valida */ }
             if (!libre && estado.horaSel === hora) {
               estado.ocupados.push({ barberoId, fecha, hora });
               estado.horaSel = '';
@@ -1986,7 +2026,7 @@
 
       box.appendChild(icono('fa-solid fa-circle-check confirmacion-check'));
       box.appendChild(el('strong', 'confirmacion-titulo', 'Cita confirmada'));
-      box.appendChild(el('span', 'confirmacion-detalle', `${formatoFechaLarga(cita.fecha)}, ${formatoHora(cita.hora)}`));
+      box.appendChild(el('span', 'confirmacion-detalle', `${formatoFechaLarga(cita.fecha)}, ${textoHoraCita(cita.hora, cita.turnos)}`));
       const serv = SERVICIOS[cita.servicio];
       box.appendChild(el('span', null, `${serv.nombre} con ${nombreBarbero(cita.barberoId)} · ${formatoPrecio(serv.precio)}`));
       box.appendChild(el('span', 'confirmacion-nota',
@@ -2022,7 +2062,7 @@
       cont.replaceChildren();
       futuras.forEach(c => {
         const serv = nombreServicio(c);
-        cont.appendChild(el('p', null, `${formatoFechaLarga(c.fecha)}, ${formatoHora(c.hora)} con ${nombreBarbero(c.barberoId)}${serv ? ', ' + serv : ''}`));
+        cont.appendChild(el('p', null, `${formatoFechaLarga(c.fecha)}, ${textoHoraCita(c.hora, c.turnos)} con ${nombreBarbero(c.barberoId)}${serv ? ', ' + serv : ''}`));
       });
       $('dlg-otra-titulo').textContent = futuras.length === 1 ? 'Ya tienes una cita' : `Ya tienes ${futuras.length} citas`;
       const dlg = $('dlg-otra-cita');
@@ -2082,7 +2122,7 @@
       try {
         const cita = {
           clienteNombre: nombre, clienteTelefono: telefono, barberoId,
-          servicio, servicioNombre: SERVICIOS[servicio].nombre, fecha, hora
+          servicio, servicioNombre: SERVICIOS[servicio].nombre, fecha, hora, turnos: turnosDe(servicio)
         };
         await Store.reservar(cita);
         estado.usuario.nombre = nombre;
@@ -2528,7 +2568,12 @@
       const card = el('div', 'card' + (est === 'bloqueada' ? ' card-bloqueada' : ''));
       const info = el('div', 'card-info');
       const h3 = el('h3');
-      h3.append(`${formatoHora(c.hora)} – ${c.clienteNombre || 'Cliente'}`);
+      h3.append(`${textoHoraCita(c.hora, c.turnos)} – ${c.clienteNombre || 'Cliente'}`);
+      if (c.servicio === 'domicilio') {
+        const b = el('span', 'badge badge-domicilio');
+        b.append(icono('fa-solid fa-house'), ' domicilio');
+        h3.append(b);
+      }
       h3.append(el('span', `badge badge-${est}`, textoEstado));
 
       const p = el('p');
@@ -2543,7 +2588,7 @@
         acciones.append(
           botonAccion('fa-solid fa-check', 'var(--ok)', 'Marcar como realizada', () => actualizarCita(c, 'completada')),
           botonAccion('fa-solid fa-xmark', 'var(--peligro)', 'Cancelar cita', () => {
-            if (confirm(`¿Cancelar la cita de ${c.clienteNombre} de las ${formatoHora(c.hora)}? La hora queda libre para otros clientes.`)) actualizarCita(c, 'cancelada');
+            if (confirm(`¿Cancelar la cita de ${c.clienteNombre} de las ${textoHoraCita(c.hora, c.turnos)}? La hora queda libre para otros clientes.`)) actualizarCita(c, 'cancelada');
           })
         );
       }
@@ -2593,7 +2638,7 @@
     function descargarRespaldo() {
       if (!estado.citas.length) return avisar('Todavía no hay citas para respaldar.', 'error');
       const columnas = [
-        ['Fecha', c => c.fecha], ['Hora', c => formatoHora(c.hora)], ['Estado', c => c.estado],
+        ['Fecha', c => c.fecha], ['Hora', c => textoHoraCita(c.hora, c.turnos)], ['Estado', c => c.estado],
         ['Cliente', c => c.clienteNombre], ['Teléfono', c => c.clienteTelefono ? '+' + c.clienteTelefono : ''],
         ['Correo', c => c.clienteEmail], ['Servicio', c => nombreServicio(c)],
         ['Precio', c => (SERVICIOS[c.servicio] ? SERVICIOS[c.servicio].precio : '')],
