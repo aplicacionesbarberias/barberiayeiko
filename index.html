@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reserva tu cita en Barbería Yeiko: elige tu corte, el día y la hora en segundos.">
+  <meta name="theme-color" content="#000000">
+  <title>Barbería Yeiko - Reservas</title>
+
+  <!-- Ícono de la pestaña y de la app instalada en el celular -->
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Barbería Yeiko">
+
+  <!-- Vista previa al compartir el link (WhatsApp, Facebook…). CAMBIA "TU_USUARIO" por tu usuario de GitHub. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Barbería Yeiko">
+  <meta property="og:description" content="Reserva tu cita en Barbería Yeiko: elige tu corte, el día y la hora en segundos.">
+  <meta property="og:image" content="https://TU_USUARIO.github.io/barberia-yeiko/img/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo de Barbería Yeiko">
+  <meta property="og:url" content="https://TU_USUARIO.github.io/barberia-yeiko/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Paleta tomada del logo: negro profundo y dorado. */
+    :root {
+      --negro: #000000;
+      --carbon: #121110;
+      --concreto: #1c1a16;
+      --linea: #3b3220;
+      --oro: #d4af37;
+      --oro-claro: #f1d27a;
+      --oro-oscuro: #9c7a22;
+      --blanco: #f6f1e4;
+      --gris: #a39b8b;
+      --ok: #5fbf85;
+      --alerta: #e6a93c;
+      --peligro: #e05a52;
+      --info: #6aa6dc;
+      --degradado: linear-gradient(135deg, #f6dc8a 0%, #d4af37 45%, #a8801f 100%);
+      --serif: 'Cinzel', Georgia, 'Times New Roman', serif;
+      --sans: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    [hidden] { display: none !important; }
+
+    body {
+      background: var(--negro);
+      background-image: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.10), transparent 60%);
+      background-repeat: no-repeat;
+      color: var(--blanco);
+      font-family: var(--sans);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    button, input, select { font-family: inherit; }
+    :focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
+
+    /* ---------- Encabezado ---------- */
+    header {
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(6px);
+      padding: 0.6rem 1.2rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--linea);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--oro); }
+    .marca img { height: 44px; width: 44px; border-radius: 50%; }
+    .marca span { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; letter-spacing: 0.06em; }
+
+    .nav-tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+    .nav-saludo { font-size: 0.85rem; color: var(--gris); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .tab-btn {
+      background: transparent; border: 1px solid var(--oro); color: var(--oro);
+      padding: 7px 14px; border-radius: 999px; cursor: pointer; font-weight: 500; font-size: 0.85rem;
+    }
+    .tab-btn.active, .tab-btn:hover { background: var(--oro); color: var(--negro); }
+    .tab-btn.danger { border-color: var(--peligro); color: var(--peligro); }
+    .tab-btn.danger:hover { background: var(--peligro); color: #fff; }
+
+    /* ---------- Avisos ---------- */
+    .banner { font-size: 0.85rem; text-align: center; padding: 0.55rem 1rem; }
+    .banner.error { background: rgba(224, 90, 82, 0.15); border-bottom: 1px solid var(--peligro); color: var(--peligro); }
+    .banner.info {
+      background: var(--carbon); border-bottom: 1px solid var(--linea);
+      display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .banner.info a { color: var(--oro); font-weight: 600; }
+
+    main { flex: 1; padding: 1.5rem; max-width: 760px; margin: 0 auto; width: 100%; }
+    main:has(#view-barbero.active) { max-width: 1000px; }
+
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    h2 {
+      font-family: var(--serif); font-weight: 700; font-size: 1.45rem; line-height: 1.2;
+      letter-spacing: 0.04em; color: var(--oro);
+      margin: 2.6rem 0 1rem;
+      display: flex; align-items: center; gap: 12px;
+    }
+    h2::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--oro-oscuro), transparent); }
+
+    /* ---------- Portada ---------- */
+    .hero { text-align: center; padding-top: 1.2rem; }
+    .hero-logo {
+      width: min(320px, 78vw); height: auto; display: block; margin: 0 auto;
+      border-radius: 50%;
+      box-shadow: 0 0 60px rgba(212, 175, 55, 0.28), 0 0 0 1px rgba(212, 175, 55, 0.25);
+    }
+    .btn-instalar {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 1.4rem;
+      background: transparent; color: var(--oro);
+      border: 1px dashed var(--oro); border-radius: 999px;
+      padding: 10px 20px; font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    }
+    .btn-instalar:hover { background: var(--oro); color: var(--negro); border-style: solid; }
+    .pasos-ios { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.4rem; }
+    .pasos-ios i { width: 1.2em; text-align: center; }
+    .hero-texto { max-width: 34rem; margin: 1.4rem auto 1.6rem; color: #ddd5c4; font-size: 1rem; }
+
+    /* ---------- Tu cita programada ---------- */
+    .mis-citas {
+      text-align: left;
+      border: 1px solid var(--oro);
+      background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(212, 175, 55, 0.02));
+      border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.2rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .mis-citas-titulo { font-family: var(--serif); color: var(--oro); font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+    .mis-citas-item {
+      display: flex; gap: 12px; align-items: center;
+      background: var(--carbon); border: 1px solid var(--linea); border-radius: 10px; padding: 0.7rem 0.9rem;
+    }
+    .mis-citas-item .fecha-chip {
+      flex: 0 0 auto; text-align: center; min-width: 52px;
+      background: var(--degradado); color: var(--negro); border-radius: 10px; padding: 4px 6px; line-height: 1.15;
+    }
+    .fecha-chip b { display: block; font-family: var(--serif); font-size: 1.25rem; }
+    .fecha-chip small { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+    .mis-citas-item .detalle { font-size: 0.92rem; }
+    .mis-citas-item .detalle strong { display: block; font-size: 1rem; }
+    .mis-citas .hint { margin: 0; }
+    .mis-citas a { color: var(--oro); font-weight: 600; }
+
+    /* ---------- Formularios ---------- */
+    .caja { background: var(--carbon); padding: 1.4rem; border-radius: 14px; border: 1px solid var(--linea); }
+    .form-group { margin-bottom: 1.3rem; }
+    label, .etiqueta { display: block; margin-bottom: 0.5rem; color: var(--gris); font-size: 0.9rem; }
+    .etiqueta i, label i { color: var(--oro); }
+
+    input, select {
+      width: 100%; padding: 12px;
+      background: var(--concreto); border: 1px solid var(--linea); border-radius: 8px;
+      color: var(--blanco); font-size: 1rem;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--oro); }
+    input:focus-visible, select:focus-visible { outline: 2px solid var(--oro); outline-offset: 1px; }
+    input[type="date"] { color-scheme: dark; }
+
+    .btn {
+      background: var(--degradado); color: var(--negro);
+      border: 1px solid var(--oro);
+      padding: 12px 22px; font-weight: 700; border-radius: 999px;
+      cursor: pointer; width: 100%; font-size: 1rem;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background: transparent; color: var(--oro); border-color: var(--linea); font-weight: 600; }
+    .btn-secondary:hover { background: var(--concreto); filter: none; }
+    .btn-danger { background: var(--peligro); border-color: var(--peligro); color: #fff; }
+
+    .form-error { color: var(--peligro); font-size: 0.85rem; margin-bottom: 1rem; min-height: 1.2em; }
+    .hint { color: var(--gris); font-size: 0.85rem; margin-bottom: 1rem; }
+    .link-btn {
+      background: none; border: none; color: var(--oro); cursor: pointer;
+      font-size: 0.85rem; text-decoration: underline; padding: 0; margin-bottom: 1rem;
+    }
+
+    /* ---------- Acceso ---------- */
+    .login-box { max-width: 420px; margin: 2rem auto; }
+    .auth-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.2rem; border-bottom: 1px solid var(--linea); padding-bottom: 0.8rem; }
+    .auth-tab { background: none; border: none; color: var(--gris); padding: 6px 14px; cursor: pointer; font-weight: 500; font-size: 0.95rem; border-radius: 999px; }
+    .auth-tab.active { background: var(--oro); color: var(--negro); }
+
+    /* ---------- Desplegables ---------- */
+    .toggle {
+      width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      background: var(--degradado); color: var(--negro); border: 1px solid var(--oro);
+      border-radius: 999px; padding: 0.95rem 1.4rem; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.18);
+    }
+    .toggle span { display: flex; align-items: center; gap: 10px; }
+    .toggle-icon { transition: transform 0.2s; }
+    .toggle[aria-expanded="true"] .toggle-icon { transform: rotate(180deg); }
+    .toggle.oscuro { background: transparent; color: var(--oro); border-color: var(--linea); border-radius: 12px; box-shadow: none; }
+
+    .reserva-contenido { margin-top: 1rem; }
+    .gate-msg { color: var(--gris); margin-bottom: 1.2rem; }
+    .gate-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .gate-actions .btn { flex: 1 1 180px; width: auto; }
+
+    /* ---------- Elegir servicio ---------- */
+    .servicios-opciones { display: grid; gap: 8px; }
+    .servicio-opcion { position: relative; margin: 0; }
+    .servicio-opcion input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .servicio-opcion > span {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 12px 14px; background: var(--concreto); border: 1px solid var(--linea); border-radius: 10px;
+      color: var(--blanco); cursor: pointer; font-size: 0.95rem;
+    }
+    .servicio-opcion > span b { font-weight: 600; }
+    .servicio-opcion input:checked + span { background: var(--degradado); color: var(--negro); border-color: var(--oro); }
+    .servicio-opcion input:focus-visible + span { outline: 2px solid var(--oro); outline-offset: 2px; }
+    .barberos-opciones { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+    .barberos-opciones .servicio-opcion > span { justify-content: center; font-family: var(--serif); font-size: 1.1rem; padding: 14px; }
+    .horario-barbero + .horario-barbero { margin-top: 1.6rem; }
+    .horario-barbero h3 { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; color: var(--oro-claro); margin-bottom: 0.7rem; }
+
+    /* ---------- Tira de días ---------- */
+    .dia-strip-wrap { position: relative; }
+    .dia-strip { display: flex; gap: 8px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; padding: 2px 30px; }
+    .dia-strip::-webkit-scrollbar { display: none; }
+    .dia-card {
+      flex: 0 0 66px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 10px 4px; background: var(--concreto); border: 1px solid var(--linea);
+      border-radius: 999px 999px 10px 10px; color: var(--blanco); cursor: pointer;
+    }
+    .dia-card-abrev { font-size: 0.72rem; color: var(--gris); }
+    .dia-card-num { font-family: var(--serif); font-weight: 700; font-size: 1.3rem; line-height: 1.1; }
+    .dia-card-estado { font-size: 0.66rem; color: var(--ok); }
+    .dia-card:disabled { opacity: 0.4; cursor: not-allowed; }
+    .dia-card:disabled .dia-card-estado { color: var(--gris); }
+    .dia-card.seleccionado { background: var(--degradado); border-color: var(--oro); }
+    .dia-card.seleccionado .dia-card-abrev,
+    .dia-card.seleccionado .dia-card-num,
+    .dia-card.seleccionado .dia-card-estado { color: var(--negro); }
+    .dia-card.inactivo { opacity: 0.45; }
+    #bdia-strip .dia-card-estado { color: var(--oro-claro); }
+    #bdia-strip .dia-card.sin-citas .dia-card-estado,
+    #bdia-strip .dia-card.inactivo .dia-card-estado { color: var(--gris); }
+    #bdia-strip .dia-card.seleccionado .dia-card-estado { color: var(--negro); }
+
+    .dia-flecha {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--negro); border: 1px solid var(--oro); color: var(--oro);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; font-size: 1rem;
+    }
+    .dia-flecha-izq { left: 0; }
+    .dia-flecha-der { right: 0; }
+
+    /* ---------- Horas ---------- */
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 0.5rem; }
+    .slots-msg { grid-column: 1 / -1; color: var(--gris); font-size: 0.9rem; }
+    .slots-msg.warn { color: var(--alerta); }
+    .slot-btn {
+      padding: 10px 6px; background: var(--concreto); border: 1px solid var(--linea);
+      color: var(--blanco); border-radius: 8px; cursor: pointer; font-size: 0.88rem; white-space: nowrap;
+    }
+    .slot-btn:hover:not(:disabled) { border-color: var(--oro); }
+    .slot-btn.selected { background: var(--degradado); color: var(--negro); font-weight: 700; border-color: var(--oro); }
+    .slot-btn.blocked { background: #151412; color: #5f5a50; text-decoration: line-through; cursor: not-allowed; }
+
+    /* ---------- Tarjeta de cita confirmada ---------- */
+    .confirmacion {
+      border: 1px solid var(--oro); border-radius: 14px;
+      background: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.16), transparent 70%);
+      padding: 1.8rem 1.2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-align: center;
+      animation: aparecer 0.35s ease-out;
+    }
+    @keyframes aparecer { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+    .confirmacion-check { font-size: 3rem; color: var(--oro); }
+    .confirmacion-titulo { font-family: var(--serif); font-weight: 700; font-size: 1.45rem; color: var(--oro); }
+    .confirmacion-detalle { font-size: 1.1rem; font-weight: 600; }
+    .confirmacion-nota { color: var(--gris); font-size: 0.88rem; max-width: 26rem; }
+    .confirmacion .btn { width: auto; padding: 10px 32px; margin-top: 0.6rem; }
+
+    /* ---------- Galería ---------- */
+    .galeria-carrusel-wrap { position: relative; }
+    .gallery-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; scrollbar-width: none; }
+    .gallery-grid::-webkit-scrollbar { display: none; }
+    .galeria-pagina { flex: 0 0 100%; scroll-snap-align: start; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 150px; gap: 8px; }
+    .gallery-item { border-radius: 10px; overflow: hidden; border: 1px solid var(--linea); cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .galeria-flecha {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(0, 0, 0, 0.8); border: 1px solid var(--oro); color: var(--oro);
+      font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2;
+    }
+    .galeria-flecha-izq { left: -6px; }
+    .galeria-flecha-der { right: -6px; }
+    .galeria-puntos { display: flex; justify-content: center; gap: 6px; margin-top: 0.7rem; }
+    .punto-pagina { width: 7px; height: 7px; border-radius: 50%; background: var(--linea); }
+    .punto-pagina.activo { background: var(--oro); }
+
+    /* ---------- Productos ---------- */
+    .productos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .producto { background: var(--carbon); border: 1px solid var(--linea); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .producto img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+    .producto-info { padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; }
+    .producto-info h3 { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; color: var(--oro-claro); }
+    .producto-info p { color: var(--gris); font-size: 0.85rem; flex: 1; }
+    .producto-precio { font-weight: 600; }
+    .producto a {
+      margin-top: 0.4rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 9px 12px; border-radius: 999px; border: 1px solid var(--oro); color: var(--oro);
+      text-decoration: none; font-size: 0.88rem; font-weight: 500;
+    }
+    .producto a:hover { background: var(--oro); color: var(--negro); }
+
+    /* ---------- Tablero de precios y horario ---------- */
+    .tablero { display: flex; flex-direction: column; gap: 0.7rem; }
+    .fila-tablero { display: flex; align-items: baseline; gap: 0.6rem; font-size: 1.02rem; }
+    .fila-tablero .puntos { flex: 1; border-bottom: 1px dotted var(--oro-oscuro); transform: translateY(-4px); min-width: 20px; }
+    .fila-tablero .valor { font-weight: 600; white-space: nowrap; color: var(--oro-claro); }
+    .fila-tablero.cerrado .valor { color: var(--gris); font-weight: 400; }
+    .fila-nota { font-size: 0.8rem; color: var(--gris); margin-top: -0.5rem; text-align: right; }
+
+    /* ---------- Redes ---------- */
+    .social-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 2.4rem 0 1rem; }
+    .social-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--oro); color: var(--oro);
+      padding: 10px 18px; border-radius: 999px; text-decoration: none; font-size: 0.92rem;
+    }
+    .social-btn:hover { background: var(--oro); color: var(--negro); }
+    .social-btn.principal { background: var(--degradado); color: var(--negro); font-weight: 700; }
+
+    /* ---------- Visor de fotos ---------- */
+    .modal-lightbox { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.94); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; }
+    .modal-lightbox img { max-width: 92%; max-height: 86%; border-radius: 12px; border: 1px solid var(--oro); }
+    .modal-close-btn { position: absolute; top: 16px; right: 22px; background: none; border: none; color: var(--oro); font-size: 2.2rem; cursor: pointer; line-height: 1; }
+
+    /* ---------- Panel del barbero ---------- */
+    .panel-titulo { font-family: var(--serif); font-weight: 700; font-size: 1.7rem; color: var(--oro); margin: 0.4rem 0 1.2rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+    .metric-card { background: var(--carbon); padding: 1rem 1.1rem; border-radius: 12px; border: 1px solid var(--linea); display: flex; align-items: center; gap: 14px; }
+    .metric-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border: 1px solid var(--linea); color: var(--oro); }
+    .metric-info h4 { font-family: var(--serif); font-weight: 700; font-size: 1.5rem; line-height: 1.1; }
+    .metric-info p { font-size: 0.8rem; color: var(--gris); }
+
+    .panel { background: var(--carbon); border: 1px solid var(--linea); border-radius: 14px; padding: 1.1rem 1.2rem; margin-bottom: 1.4rem; }
+    .panel-seccion { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 0.9rem; color: var(--oro-claro); }
+
+    .subtabs { display: flex; gap: 8px; border-bottom: 1px solid var(--linea); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+    .subtab-btn { background: none; border: none; color: var(--gris); padding: 6px 14px; cursor: pointer; font-weight: 500; font-size: 0.9rem; border-radius: 999px; }
+    .subtab-btn.active { background: var(--oro); color: var(--negro); }
+
+    .historico-controles { display: flex; gap: 10px; align-items: center; }
+    .historico-controles input { flex: 1; }
+    .historico-controles .btn { width: auto; padding: 11px 16px; }
+
+    .bloqueos-botones { display: flex; gap: 10px; flex-wrap: wrap; }
+    .bloqueos-botones .btn { flex: 1 1 150px; width: auto; }
+
+    .cards-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .card {
+      background: var(--concreto); padding: 1rem 1.1rem; border-radius: 10px;
+      border: 1px solid var(--linea); border-left: 3px solid var(--oro);
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .card.card-descanso, .card.card-bloqueada { border-left-color: var(--gris); }
+    .card-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .card-info p { color: var(--gris); font-size: 0.85rem; }
+    .empty-msg { color: var(--gris); text-align: center; padding: 1rem 0; }
+
+    .badge { padding: 3px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+    .badge-pendiente  { background: rgba(230, 169, 60, 0.18); color: var(--alerta); }
+    .badge-completada { background: rgba(95, 191, 133, 0.18); color: var(--ok); }
+    .badge-cancelada  { background: rgba(224, 90, 82, 0.18); color: var(--peligro); }
+    .badge-bloqueada  { background: rgba(163, 155, 139, 0.18); color: #c9c1b0; }
+
+    .card-actions { display: flex; gap: 8px; }
+    .action-btn {
+      background: var(--carbon); border: 1px solid var(--linea); color: var(--blanco);
+      padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+      text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .action-btn:hover { background: #26231d; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--linea); border-radius: 999px; padding: 5px 5px 5px 12px; font-size: 0.85rem; }
+    .chip > i { color: var(--oro); }
+    .chip-btn {
+      background: var(--concreto); border: 1px solid var(--linea); color: var(--blanco);
+      border-radius: 50%; width: 26px; height: 26px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+    .chip-btn:hover { background: var(--peligro); border-color: var(--peligro); }
+
+    /* ---------- Diálogos y avisos ---------- */
+    dialog {
+      margin: auto; background: var(--carbon); color: var(--blanco);
+      border: 1px solid var(--oro-oscuro); border-radius: 14px; padding: 1.5rem; width: min(92vw, 380px);
+    }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.8); }
+    dialog h3 { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--oro); margin-bottom: 1rem; }
+    .dialog-actions { display: flex; gap: 10px; margin-top: 1rem; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, 20px);
+      background: var(--oro); color: var(--negro);
+      border-radius: 999px; padding: 0.8rem 1.3rem; font-size: 0.9rem; font-weight: 600;
+      width: max-content; max-width: 90vw; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 2000;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast.error { background: var(--peligro); color: #fff; }
+
+    @media (max-width: 600px) {
+      main { padding: 1rem; }
+      header { padding: 0.55rem 0.9rem; }
+      .marca span { display: none; }
+      h2 { font-size: 1.25rem; }
+      .galeria-pagina { grid-auto-rows: 120px; }
+      .card { flex-direction: column; align-items: flex-start; }
+      .card-actions { width: 100%; justify-content: flex-end; }
+      .productos { grid-template-columns: 1fr; }
+      .producto { flex-direction: row; }
+      .producto img { width: 120px; aspect-ratio: auto; height: auto; min-height: 100%; flex-shrink: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO -->
+  <header>
+    <a class="marca" href="#" id="marca-inicio" aria-label="Barbería Yeiko, inicio">
+      <img src="img/logo-96.png" alt="">
+      <span>BARBERÍA YEIKO</span>
+    </a>
+    <nav class="nav-tabs" aria-label="Navegación principal">
+      <span class="nav-saludo" id="nav-saludo" hidden></span>
+      <button type="button" class="tab-btn" id="btn-ingresar" hidden>Ingresar</button>
+      <button type="button" class="tab-btn" id="btn-tab-cliente" hidden>Vista cliente</button>
+      <button type="button" class="tab-btn" id="btn-tab-barbero" hidden>Mi panel</button>
+      <button type="button" class="tab-btn danger" id="btn-salir" hidden>Salir</button>
+    </nav>
+  </header>
+
+  <div class="banner error" id="banner-error" role="alert" hidden></div>
+  <div class="banner info" id="banner-telegram" hidden>
+    <span><i class="fa-brands fa-telegram" aria-hidden="true"></i> <span id="texto-telegram">Conecta Telegram para recibir la confirmación y el recordatorio de tus citas</span></span>
+    <a href="#" id="btn-telegram-conectar" target="_blank" rel="noopener noreferrer">Conectar</a>
+  </div>
+
+  <main>
+    <!-- ================= ACCESO ================= -->
+    <section id="view-login" class="view-section">
+      <div class="login-box caja">
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" data-auth="login">Iniciar sesión</button>
+          <button type="button" class="auth-tab" data-auth="registro">Crear cuenta</button>
+        </div>
+
+        <form id="form-login" novalidate>
+          <div class="form-group">
+            <label for="login-email">Correo</label>
+            <input type="email" id="login-email" autocomplete="username" autocapitalize="none" required>
+          </div>
+          <div class="form-group">
+            <label for="login-pass">Contraseña</label>
+            <input type="password" id="login-pass" autocomplete="current-password" required>
+          </div>
+          <button type="button" class="link-btn" id="btn-olvide">¿Olvidaste tu contraseña?</button>
+          <p class="form-error" id="login-error" role="alert"></p>
+          <button type="submit" class="btn" id="btn-login">Ingresar</button>
+          <button type="button" class="btn btn-secondary btn-volver" style="margin-top: 0.6rem;">Volver</button>
+        </form>
+
+        <form id="form-registro" novalidate hidden>
+          <div class="form-group">
+            <label for="reg-nombre">Nombre completo</label>
+            <input type="text" id="reg-nombre" maxlength="80" autocomplete="name" required placeholder="Ej. Carlos Gómez">
+          </div>
+          <div class="form-group">
+            <label for="reg-telefono">Teléfono / WhatsApp</label>
+            <input type="tel" id="reg-telefono" autocomplete="tel" required placeholder="Ej. 3001234567">
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Correo</label>
+            <input type="email" id="reg-email" autocomplete="email" autocapitalize="none" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-pass">Contraseña (mínimo 6 caracteres)</label>
+            <input type="password" id="reg-pass" autocomplete="new-password" minlength="6" required>
+          </div>
+          <p class="hint">Usa un correo real: ahí te llegan la confirmación y el recordatorio de tu cita.</p>
+          <p class="form-error" id="registro-error" role="alert"></p>
+          <button type="submit" class="btn" id="btn-registro">Crear mi cuenta</button>
+          <button type="button" class="btn btn-secondary btn-volver" style="margin-top: 0.6rem;">Volver</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= VISTA DEL CLIENTE ================= -->
+    <section id="view-cliente" class="view-section active">
+
+      <div class="hero">
+        <img class="hero-logo" src="img/logo.png" alt="Barbería Yeiko" width="480" height="480">
+        <button type="button" class="btn-instalar" id="btn-instalar" hidden>
+          <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Descargar la app en tu celular
+        </button>
+        <p class="hero-texto">Cortes con estilo y con detalle. Elige tu corte, el día y la hora, y llega tranquilo: tu turno queda a tu nombre.</p>
+      </div>
+
+      <!-- TU CITA PROGRAMADA (aparece sola cuando el cliente tiene citas) -->
+      <div class="mis-citas" id="mis-citas-aviso" role="status" hidden></div>
+
+      <!-- RESERVAR CITA -->
+      <div class="reserva-panel">
+        <button type="button" class="toggle" id="btn-reserva-toggle" aria-expanded="false" aria-controls="reserva-contenido">
+          <span><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Reservar cita</span>
+          <i class="fa-solid fa-chevron-down toggle-icon" aria-hidden="true"></i>
+        </button>
+
+        <div class="reserva-contenido" id="reserva-contenido" hidden>
+          <div class="caja" id="reserva-login">
+            <p class="gate-msg">Para reservar necesitas una cuenta. Así tu turno queda a tu nombre y te llegan los avisos.</p>
+            <div class="gate-actions">
+              <button type="button" class="btn" id="btn-gate-login">Iniciar sesión</button>
+              <button type="button" class="btn btn-secondary" id="btn-gate-registro">Crear cuenta</button>
+            </div>
+          </div>
+
+          <div class="caja" id="reserva-box" hidden>
+            <div class="confirmacion" id="confirmacion" role="status" hidden></div>
+
+            <form id="form-reserva" novalidate>
+              <fieldset class="form-group" id="grupo-barbero" style="border: none;">
+                <legend class="etiqueta"><i class="fa-solid fa-user" aria-hidden="true"></i> Barbero</legend>
+                <div class="servicios-opciones barberos-opciones" id="barberos-opciones"></div>
+              </fieldset>
+              <input type="hidden" id="select-barbero" value="">
+
+              <fieldset class="form-group" style="border: none;">
+                <legend class="etiqueta"><i class="fa-solid fa-scissors" aria-hidden="true"></i> Servicio</legend>
+                <div class="servicios-opciones" id="servicios-opciones"></div>
+              </fieldset>
+
+              <input type="hidden" id="select-fecha" value="">
+
+              <div class="form-group">
+                <span class="etiqueta" id="lbl-dias"><i class="fa-solid fa-calendar" aria-hidden="true"></i> Día</span>
+                <div class="dia-strip-wrap">
+                  <button type="button" class="dia-flecha dia-flecha-izq" id="dias-prev" aria-label="Ver días anteriores" hidden>‹</button>
+                  <div class="dia-strip" id="dia-strip" role="group" aria-labelledby="lbl-dias">
+                    <p class="hint">Cargando horarios…</p>
+                  </div>
+                  <button type="button" class="dia-flecha dia-flecha-der" id="dias-next" aria-label="Ver más días" hidden>›</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="etiqueta" id="lbl-horas"><i class="fa-solid fa-clock" aria-hidden="true"></i> Hora</span>
+                <div class="slots-grid" id="grid-horarios" role="group" aria-labelledby="lbl-horas">
+                  <small class="slots-msg">Elige un día para ver las horas libres.</small>
+                </div>
+              </div>
+
+              <div id="datos-cliente-wrap" hidden>
+                <div class="form-group">
+                  <label for="cliente-nombre"><i class="fa-solid fa-user" aria-hidden="true"></i> Nombre completo</label>
+                  <input type="text" id="cliente-nombre" maxlength="80" autocomplete="name" required placeholder="Ej. Carlos Gómez">
+                </div>
+                <div class="form-group">
+                  <label for="cliente-telefono"><i class="fa-solid fa-phone" aria-hidden="true"></i> Teléfono / WhatsApp</label>
+                  <input type="tel" id="cliente-telefono" autocomplete="tel" required placeholder="Ej. 3001234567">
+                </div>
+                <button type="submit" class="btn" id="btn-reservar">Confirmar cita</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- GALERÍA -->
+      <h2>Trabajos recientes</h2>
+      <div class="galeria-carrusel-wrap">
+        <button type="button" class="galeria-flecha galeria-flecha-izq" id="galeria-prev" aria-label="Ver fotos anteriores" hidden>‹</button>
+        <div class="gallery-grid" id="gallery-grid">
+          <p class="empty-msg">Cargando fotos…</p>
+        </div>
+        <button type="button" class="galeria-flecha galeria-flecha-der" id="galeria-next" aria-label="Ver más fotos" hidden>›</button>
+      </div>
+      <div class="galeria-puntos" id="gallery-dots"></div>
+
+      <!-- PRODUCTOS (se oculta si la lista está vacía) -->
+      <div id="sec-productos">
+        <h2>Productos a la venta</h2>
+        <div class="productos" id="lista-productos"></div>
+      </div>
+
+      <!-- SERVICIOS -->
+      <h2>Servicios</h2>
+      <div class="tablero" id="lista-servicios"></div>
+
+      <!-- HORARIO -->
+      <h2>Horario</h2>
+      <div id="lista-horario"><p class="hint">Cargando horario…</p></div>
+      <p class="hint" style="margin-top: 0.9rem;">Cada turno dura una hora: la última cita del día empieza una hora antes del cierre. Los festivos no atendemos, salvo que el barbero lo habilite (si es así, aparece disponible al reservar).</p>
+
+      <!-- OTROS SERVICIOS (se oculta si la lista está vacía) -->
+      <div id="sec-otros">
+        <h2>Otros servicios</h2>
+        <div class="tablero" id="lista-otros-servicios"></div>
+        <p class="hint" style="margin-top: 0.9rem;">Pídelos al llegar o escríbenos por WhatsApp.</p>
+      </div>
+
+      <div class="social-links" id="social-links"></div>
+    </section>
+
+    <!-- ================= PANEL DEL BARBERO ================= -->
+    <section id="view-barbero" class="view-section">
+      <h1 class="panel-titulo" id="panel-titulo">Mi panel</h1>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon"><i class="fa-solid fa-calendar-day" aria-hidden="true"></i></div>
+          <div class="metric-info"><h4 id="cnt-totales">0</h4><p>Citas de hoy</p></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="color: var(--alerta);"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
+          <div class="metric-info"><h4 id="cnt-pendientes">0</h4><p>Pendientes hoy</p></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="color: var(--ok);"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+          <div class="metric-info"><h4 id="cnt-completadas">0</h4><p>Realizadas hoy</p></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="color: var(--info);"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div>
+          <div class="metric-info"><h4 id="cnt-historico-total">0</h4><p>Citas en total</p></div>
+        </div>
+      </div>
+
+      <!-- AGENDA -->
+      <div class="panel">
+        <div class="panel-seccion"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Agenda</div>
+        <div class="subtabs" role="tablist">
+          <button type="button" class="subtab-btn active" data-modo="dia">Por día</button>
+          <button type="button" class="subtab-btn" data-modo="historico">Histórico</button>
+        </div>
+
+        <div id="agenda-dia-wrap">
+          <div class="dia-strip-wrap">
+            <button type="button" class="dia-flecha dia-flecha-izq" id="bdias-prev" aria-label="Ver días anteriores">‹</button>
+            <div class="dia-strip" id="bdia-strip" role="group" aria-label="Días con sus citas"></div>
+            <button type="button" class="dia-flecha dia-flecha-der" id="bdias-next" aria-label="Ver más días">›</button>
+          </div>
+          <p class="hint" id="agenda-dia-texto" style="margin: 0.8rem 0 0;"></p>
+        </div>
+
+        <div id="agenda-historico-wrap" hidden>
+          <label for="filtro-fecha-historico">Ver qué pasó en una fecha (vacío para ver todo)</label>
+          <div class="historico-controles">
+            <input type="date" id="filtro-fecha-historico">
+            <button type="button" class="btn btn-secondary" id="btn-historico-todo">Ver todo</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="filtro-fecha-barbero" value="">
+        <div class="cards-list" id="lista-citas-barbero" style="margin-top: 1rem;"></div>
+      </div>
+
+      <!-- RESUMEN -->
+      <div class="panel">
+        <div class="panel-seccion"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Resumen</div>
+        <div class="subtabs" role="tablist">
+          <button type="button" class="subtab-btn resumen-tab active" data-periodo="dia">Día</button>
+          <button type="button" class="subtab-btn resumen-tab" data-periodo="semana">Semana</button>
+          <button type="button" class="subtab-btn resumen-tab" data-periodo="mes">Mes</button>
+        </div>
+        <p class="hint" id="resumen-rango-texto"></p>
+        <div class="metrics-grid" style="margin-bottom: 0;">
+          <div class="metric-card"><div class="metric-info"><h4 id="resumen-total">0</h4><p>Citas del período</p></div></div>
+          <div class="metric-card"><div class="metric-info"><h4 id="resumen-completadas">0</h4><p>Realizadas</p></div></div>
+          <div class="metric-card"><div class="metric-info"><h4 id="resumen-pendientes">0</h4><p>Pendientes</p></div></div>
+          <div class="metric-card"><div class="metric-info"><h4 id="resumen-ingresos">$0</h4><p>Ingresos de citas realizadas</p></div></div>
+        </div>
+        <p class="hint" style="margin: 0.8rem 0 0;">Los ingresos suman el precio del servicio de cada cita marcada como realizada.</p>
+      </div>
+
+      <!-- BLOQUEOS -->
+      <div class="panel">
+        <div class="panel-seccion"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloqueos</div>
+        <div class="bloqueos-botones">
+          <button type="button" class="btn btn-danger" id="btn-bloquear"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear hora</button>
+          <button type="button" class="btn btn-secondary" id="btn-bloquear-dia"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i> Bloquear día(s)</button>
+        </div>
+        <p class="hint" style="margin: 1rem 0 0.6rem;">Días de descanso próximos</p>
+        <div class="chips" id="lista-dias-bloqueados"></div>
+        <p class="hint" style="margin: 1rem 0 0.6rem;">Festivos que habilitaste para trabajar</p>
+        <div class="chips" id="lista-dias-abiertos"></div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div class="panel">
+        <button type="button" class="toggle oscuro" id="btn-clientes-toggle" aria-expanded="false" aria-controls="clientes-contenido">
+          <span><i class="fa-solid fa-address-book" aria-hidden="true"></i> Mis clientes</span>
+          <i class="fa-solid fa-chevron-down toggle-icon" aria-hidden="true"></i>
+        </button>
+        <div id="clientes-contenido" hidden>
+          <div class="cards-list" id="lista-clientes" style="margin-top: 1rem;"></div>
+          <p class="hint" id="clientes-total" style="margin: 0.8rem 0 0;"></p>
+        </div>
+      </div>
+
+      <!-- RESPALDO -->
+      <div class="panel">
+        <div class="panel-seccion"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Respaldo</div>
+        <p class="hint">Descarga todas tus citas en un archivo que se abre en Excel. Hazlo cada mes y guárdalo en tu Drive o en tu correo.</p>
+        <button type="button" class="btn btn-secondary" id="btn-respaldo"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i> Descargar respaldo</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- DIÁLOGO: BLOQUEAR HORA -->
+  <dialog id="dlg-bloqueo" aria-labelledby="dlg-bloqueo-titulo">
+    <form id="form-bloqueo" novalidate>
+      <h3 id="dlg-bloqueo-titulo">Bloquear una hora</h3>
+      <div class="form-group">
+        <label for="bloq-fecha">Fecha</label>
+        <input type="date" id="bloq-fecha" required>
+      </div>
+      <div class="form-group">
+        <label for="bloq-hora">Hora</label>
+        <select id="bloq-hora"></select>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="btn-bloq-cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Bloquear</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- DIÁLOGO: BLOQUEAR DÍAS -->
+  <dialog id="dlg-dia" aria-labelledby="dlg-dia-titulo">
+    <form id="form-dia" novalidate>
+      <h3 id="dlg-dia-titulo">Bloquear días de descanso</h3>
+      <div class="form-group">
+        <label for="dia-desde">Desde</label>
+        <input type="date" id="dia-desde" required>
+      </div>
+      <div class="form-group">
+        <label for="dia-hasta">Hasta (opcional, para varios días)</label>
+        <input type="date" id="dia-hasta">
+      </div>
+      <p class="hint">Los clientes no podrán reservar esos días. Las citas que ya estaban agendadas siguen en tu lista hasta que las canceles.</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="btn-dia-cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Bloquear</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- DIÁLOGO: NUEVA CONTRASEÑA (llega desde el correo de recuperación) -->
+  <dialog id="dlg-clave" aria-labelledby="dlg-clave-titulo">
+    <form id="form-clave" novalidate>
+      <h3 id="dlg-clave-titulo">Crea tu nueva contraseña</h3>
+      <div class="form-group">
+        <label for="nueva-clave">Nueva contraseña (mínimo 6 caracteres)</label>
+        <input type="password" id="nueva-clave" autocomplete="new-password" minlength="6" required>
+      </div>
+      <p class="form-error" id="clave-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="btn-clave-cancelar">Cancelar</button>
+        <button type="submit" class="btn" id="btn-clave-guardar">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- DIÁLOGO: INSTALAR EN IPHONE -->
+  <dialog id="dlg-ios" aria-labelledby="dlg-ios-titulo">
+    <h3 id="dlg-ios-titulo">Instala la app en tu iPhone</h3>
+    <ol class="pasos-ios">
+      <li>Abre esta página en <b>Safari</b>.</li>
+      <li>Toca el botón <b>Compartir</b> <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> (abajo, o arriba en iPad).</li>
+      <li>Baja y elige <b>Agregar a pantalla de inicio</b> <i class="fa-regular fa-square-plus" aria-hidden="true"></i>.</li>
+      <li>Toca <b>Agregar</b>. El logo de Barbería Yeiko queda con tus apps.</li>
+    </ol>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="btn-ios-cerrar">Cerrar</button>
+      <button type="button" class="btn" id="btn-ios-listo">Ya la agregué</button>
+    </div>
+  </dialog>
+
+  <!-- DIÁLOGO: INSTALAR EN ANDROID -->
+  <dialog id="dlg-android" aria-labelledby="dlg-android-titulo">
+    <h3 id="dlg-android-titulo">Instala la app en tu celular</h3>
+    <ol class="pasos-ios">
+      <li id="paso-abrir-chrome">Si abriste el link desde WhatsApp, Instagram o Facebook, toca el menú <b>⋮</b> y elige <b>Abrir en Chrome</b>.</li>
+      <li>En Chrome, toca el menú <b>⋮</b> (arriba a la derecha).</li>
+      <li>Elige <b>Instalar aplicación</b> o <b>Agregar a la pantalla principal</b>.</li>
+      <li>Toca <b>Instalar</b> y espera unos segundos.</li>
+    </ol>
+    <p class="hint">Si no aparece en la pantalla principal, búscala en el cajón de aplicaciones como "Barbería Yeiko". En Xiaomi, Redmi o Poco, activa en Ajustes → Apps → Chrome → Permisos el permiso <b>Accesos directos en pantalla de inicio</b>.</p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="btn-android-cerrar">Cerrar</button>
+      <button type="button" class="btn" id="btn-android-listo">Ya la instalé</button>
+    </div>
+  </dialog>
+
+  <!-- DIÁLOGO: YA TIENES UNA CITA -->
+  <dialog id="dlg-otra-cita" aria-labelledby="dlg-otra-titulo">
+    <h3 id="dlg-otra-titulo">Ya tienes una cita</h3>
+    <div id="dlg-otra-detalle" class="hint" style="color: var(--blanco);"></div>
+    <p class="hint">¿Quieres sacar otra cita además de esa?</p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="btn-otra-no">No, dejar la mía</button>
+      <button type="button" class="btn" id="btn-otra-si">Sí, sacar otra</button>
+    </div>
+  </dialog>
+
+  <!-- VISOR DE FOTOS -->
+  <div id="modal-lightbox" class="modal-lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+    <button type="button" class="modal-close-btn" aria-label="Cerrar foto">&times;</button>
+    <img id="img-ampliada" src="" alt="">
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    'use strict';
+
+    /* =====================================================================
+       CONFIGURACIÓN — todo lo que se cambia a mano está aquí arriba
+       (Los barberos y sus horarios están en Supabase: tabla "barberos".)
+       ===================================================================== */
+    // Supabase → Project Settings → API (o "Data API"): Project URL y la clave "anon public".
+    const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+    const SUPABASE_ANON_KEY = "PEGA_AQUI_TU_ANON_KEY";
+    const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+
+    const NEGOCIO = {
+      nombre: "Barbería Yeiko",
+      whatsapp: "573226946675", // con código de país, sin + ni espacios
+      instagram: "",            // pega aquí el link cuando lo tengas; si queda vacío, el botón no aparece
+      facebook: "",
+      tiktok: ""
+    };
+
+    // El nombre de usuario del bot que creaste con @BotFather (sin @).
+    const TELEGRAM_BOT_USERNAME = "BarberiaYeikoBot";
+
+    // Solo para el texto de la tarjeta; el envío real lo controla el secreto RECORDATORIO_MINUTOS.
+    const RECORDATORIO_MINUTOS = 60;
+    const DURACION_TURNO_MIN = 60;
+
+    // Galería: sube las fotos a img/trabajos/ como trabajo-01.jpg, trabajo-02.jpg… (sin saltar números).
+    const TOTAL_CUPOS_GALERIA = 20;
+
+    const CODIGO_PAIS = "57";
+    const MAX_DIAS_BLOQUEO = 60;
+    const DIAS_PARA_RESERVAR = 30; // cuántos días hacia adelante puede reservar un cliente
+
+    // Servicios que el cliente elige al reservar. ⚠ PON AQUÍ LOS PRECIOS REALES DE YEIKO.
+    const SERVICIOS = {
+      corte_barba:   { nombre: "Corte con barba", precio: 20000 },
+      corte_general: { nombre: "Corte general",   precio: 18000 },
+      corte_parejo:  { nombre: "Corte parejo",    precio: 14000 }
+    };
+
+    // Se muestran en "Otros servicios"; no se reservan por la app. Vacío = la sección no aparece.
+    // Ejemplo: { nombre: "Cejas", precio: 5000 }
+    const OTROS_SERVICIOS = [];
+
+    // Productos a la venta. Vacío = la sección no aparece. precio: null muestra "Pregunta el precio".
+    // Ejemplo: { nombre: "Cera mate", detalle: "Fijación fuerte. 100 g.", precio: 25000, foto: "img/productos/cera.jpg" }
+    const PRODUCTOS = [];
+
+    const ESTADOS = ["pendiente", "completada", "cancelada", "bloqueada"];
+
+    // Se llena desde Supabase (tabla barberos).
+    let BARBEROS = {};
+
+    /* =====================================================================
+       UTILIDADES
+       ===================================================================== */
+    const $ = id => document.getElementById(id);
+    const pad = n => String(n).padStart(2, '0');
+
+    const fechaLocal = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+    function sumarDias(fecha, n) {
+      const d = new Date(fecha + 'T12:00:00');
+      d.setDate(d.getDate() + n);
+      return fechaLocal(d);
+    }
+
+    function sumarMinutos(hora, min) {
+      const [h, m] = hora.split(':').map(Number);
+      const t = Math.min(h * 60 + m + min, 24 * 60 - 1);
+      return `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+    }
+
+    function inicioSemana(fecha) {
+      const dow = new Date(fecha + 'T12:00:00').getDay();
+      return sumarDias(fecha, dow === 0 ? -6 : 1 - dow);
+    }
+    const finSemana = fecha => sumarDias(inicioSemana(fecha), 6);
+    const inicioMes = fecha => fecha.slice(0, 7) + '-01';
+    function finMes(fecha) {
+      const [y, m] = fecha.split('-').map(Number);
+      return `${fecha.slice(0, 7)}-${pad(new Date(y, m, 0).getDate())}`;
+    }
+
+    const horarioDe = barberoId => (BARBEROS[barberoId] && BARBEROS[barberoId].horario) || {};
+
+    // FESTIVOS DE COLOMBIA: se calculan solos para cualquier año (Ley Emiliani incluida).
+    // La base de datos usa exactamente el mismo cálculo.
+    const cacheFestivos = {};
+
+    function domingoDePascua(y) {
+      const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+      const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const mes = Math.floor((h + l - 7 * m + 114) / 31), dia = ((h + l - 7 * m + 114) % 31) + 1;
+      return Date.UTC(y, mes - 1, dia);
+    }
+
+    function festivosDelAnio(y) {
+      if (cacheFestivos[y]) return cacheFestivos[y];
+      const f = {};
+      const iso = t => new Date(t).toISOString().slice(0, 10);
+      const DIA = 86400000;
+      const fijo = (m, d, n) => { f[iso(Date.UTC(y, m - 1, d))] = n; };
+      const alLunes = (t, n) => { const dow = new Date(t).getUTCDay(); f[iso(t + ((8 - dow) % 7) * DIA)] = n; };
+      fijo(1, 1, 'Año Nuevo');
+      fijo(5, 1, 'Día del Trabajo');
+      fijo(7, 20, 'Día de la Independencia');
+      fijo(8, 7, 'Batalla de Boyacá');
+      fijo(12, 8, 'Inmaculada Concepción');
+      fijo(12, 25, 'Navidad');
+      alLunes(Date.UTC(y, 0, 6), 'Reyes Magos');
+      alLunes(Date.UTC(y, 2, 19), 'San José');
+      alLunes(Date.UTC(y, 5, 29), 'San Pedro y San Pablo');
+      alLunes(Date.UTC(y, 7, 15), 'Asunción de la Virgen');
+      alLunes(Date.UTC(y, 9, 12), 'Día de la Raza');
+      alLunes(Date.UTC(y, 10, 1), 'Todos los Santos');
+      alLunes(Date.UTC(y, 10, 11), 'Independencia de Cartagena');
+      const p = domingoDePascua(y);
+      f[iso(p - 3 * DIA)] = 'Jueves Santo';
+      f[iso(p - 2 * DIA)] = 'Viernes Santo';
+      alLunes(p + 39 * DIA, 'Ascensión del Señor');
+      alLunes(p + 60 * DIA, 'Corpus Christi');
+      alLunes(p + 68 * DIA, 'Sagrado Corazón');
+      cacheFestivos[y] = f;
+      return f;
+    }
+
+    const nombreFestivo = fecha => (fecha ? festivosDelAnio(Number(fecha.slice(0, 4)))[fecha] || null : null);
+
+    const diaAbierto = (barberoId, fecha) =>
+      estado.diasAbiertos.some(d => d.barberoId === barberoId && d.fecha === fecha);
+
+    // Festivo que el barbero NO ha habilitado: cerrado para reservas.
+    const festivoCerrado = (barberoId, fecha) =>
+      !!nombreFestivo(fecha) && !(BARBEROS[barberoId] && BARBEROS[barberoId].abreFestivos) && !diaAbierto(barberoId, fecha);
+
+    // Turnos de ese barbero en esa fecha. [] si no trabaja.
+    function horasDelDia(barberoId, fecha) {
+      if (!barberoId || !fecha || !BARBEROS[barberoId]) return [];
+      if (festivoCerrado(barberoId, fecha)) return [];
+      const dia = new Date(fecha + 'T12:00:00').getDay();
+      return (horarioDe(barberoId)[dia] || []).slice().sort();
+    }
+
+    // "13:20" -> "1:20 p. m."
+    function formatoHora(h) {
+      const [H, M] = h.split(':').map(Number);
+      const h12 = H % 12 === 0 ? 12 : H % 12;
+      return `${h12}:${pad(M)} ${H < 12 ? 'a. m.' : 'p. m.'}`; // espacios que no se parten
+    }
+
+    // Apertura, cierre y pausas (almuerzo) a partir de la lista de turnos.
+    function resumenHorario(horas) {
+      const ord = horas.slice().sort();
+      const pausas = [];
+      for (let i = 1; i < ord.length; i++) {
+        const finPrevio = sumarMinutos(ord[i - 1], DURACION_TURNO_MIN);
+        if (finPrevio < ord[i]) pausas.push([finPrevio, ord[i]]);
+      }
+      return { abre: ord[0], cierra: sumarMinutos(ord[ord.length - 1], DURACION_TURNO_MIN), pausas };
+    }
+
+    const formatoPrecio = n => '$' + Number(n).toLocaleString('es-CO');
+
+    function rangoFechas(desde, hasta) {
+      const out = [];
+      for (let f = desde; f <= hasta && out.length <= MAX_DIAS_BLOQUEO; f = sumarDias(f, 1)) out.push(f);
+      return out;
+    }
+
+    function formatoFecha(f) {
+      return new Date(f + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+
+    function formatoFechaLarga(f) {
+      const t = new Date(f + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    }
+
+    function horaPasada(fecha, hora) {
+      const hoy = fechaLocal();
+      if (fecha < hoy) return true;
+      if (fecha > hoy) return false;
+      const [h, m] = hora.split(':').map(Number);
+      const ahora = new Date();
+      return h * 60 + m <= ahora.getHours() * 60 + ahora.getMinutes();
+    }
+
+    function normalizarTelefono(valor) {
+      const d = String(valor).replace(/\D/g, '');
+      if (d.length === 10) return CODIGO_PAIS + d;
+      if (d.length >= 11 && d.length <= 15) return d;
+      return null;
+    }
+
+    const emailValido = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    const nombreBarbero = id => (BARBEROS[id] ? BARBEROS[id].nombre : id);
+    const barberosActivos = () => Object.keys(BARBEROS).filter(id => BARBEROS[id].activo);
+    const nombreServicio = c => (SERVICIOS[c.servicio] ? SERVICIOS[c.servicio].nombre : c.servicioNombre || '');
+    const textoServicio = c => SERVICIOS[c.servicio] ? `${SERVICIOS[c.servicio].nombre} (${formatoPrecio(SERVICIOS[c.servicio].precio)})` : (c.servicioNombre || '');
+    const whatsappBarbero = id => (BARBEROS[id] && BARBEROS[id].whatsapp) || NEGOCIO.whatsapp;
+
+    function el(tag, clase, texto) {
+      const n = document.createElement(tag);
+      if (clase) n.className = clase;
+      if (texto != null) n.textContent = texto;
+      return n;
+    }
+
+    function icono(clases) {
+      const i = document.createElement('i');
+      i.className = clases;
+      i.setAttribute('aria-hidden', 'true');
+      return i;
+    }
+
+    let toastTimer;
+    function avisar(mensaje, tipo = 'info') {
+      const t = $('toast');
+      t.textContent = mensaje;
+      t.className = `toast show ${tipo}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 4500);
+    }
+
+    function mensajeAuth(ex) {
+      const c = String((ex && (ex.code || '')) || '');
+      const m = String((ex && ex.message) || '').toLowerCase();
+      if (c === 'invalid_credentials' || m.includes('invalid login')) return 'Correo o contraseña incorrectos.';
+      if (c === 'user_already_exists' || c === 'email_exists' || m.includes('already registered')) return 'Ese correo ya tiene una cuenta. Inicia sesión.';
+      if (c === 'email_not_confirmed' || m.includes('not confirmed')) return 'Primero confirma tu correo: revisa tu bandeja de entrada (y la de spam).';
+      if (c === 'weak_password' || m.includes('password should')) return 'La contraseña debe tener al menos 6 caracteres.';
+      if (c === 'email_address_invalid' || m.includes('invalid email') || m.includes('is invalid')) return 'El correo no es válido.';
+      if (c.startsWith('over_') || m.includes('rate limit') || m.includes('too many')) return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+      if (c === 'same_password') return 'La nueva contraseña debe ser diferente a la anterior.';
+      if (m.includes('failed to fetch') || m.includes('network')) return 'Sin conexión. Revisa tu internet.';
+      if (c === 'signup_disabled' || m.includes('signups not allowed')) return 'El registro está desactivado en Supabase (Authentication → Sign In / Providers).';
+      return 'No se pudo completar la operación. Inténtalo de nuevo.';
+    }
+
+    /* =====================================================================
+       DATOS (Supabase: base de datos + cuentas + tiempo real)
+       Tablas:
+         barberos            nombre, WhatsApp y horario de cada barbero
+         citas               datos de la cita (cada cliente ve solo las suyas)
+         horarios_ocupados   hora ocupada, sin datos personales (público)
+         dias_bloqueados     días de descanso
+         dias_abiertos       festivos que el barbero habilitó
+         perfiles            nombre, teléfono, correo y chat de Telegram
+         staff               qué cuenta es barbero
+       ===================================================================== */
+    const Store = (() => {
+      let sb = null;
+      let nCanal = 0;
+
+      const deCita = r => ({
+        id: r.id, uid: r.uid, barberoId: r.barbero_id, fecha: r.fecha, hora: r.hora,
+        servicio: r.servicio, servicioNombre: r.servicio_nombre,
+        clienteNombre: r.cliente_nombre, clienteTelefono: r.cliente_telefono, clienteEmail: r.cliente_email,
+        estado: r.estado, creadaEn: r.creada_en
+      });
+
+      // Carga los datos y los mantiene al día: tiempo real + al volver a la pestaña + cada cierto tiempo.
+      function vivo(tabla, filtro, cargar, cb, cadaMs = 60000) {
+        let cerrado = false, t = null;
+        const recargar = async () => {
+          try { const datos = await cargar(); if (!cerrado) cb(datos); }
+          catch (e) { console.error(tabla, e); }
+        };
+        const opciones = { event: '*', schema: 'public', table: tabla };
+        if (filtro) opciones.filter = filtro;
+        const canal = sb.channel(`rt-${tabla}-${++nCanal}`)
+          .on('postgres_changes', opciones, () => { clearTimeout(t); t = setTimeout(recargar, 250); })
+          .subscribe();
+        const alVolver = () => { if (document.visibilityState === 'visible') recargar(); };
+        document.addEventListener('visibilitychange', alVolver);
+        const intervalo = setInterval(alVolver, cadaMs);
+        recargar();
+        return {
+          recargar,
+          cerrar() {
+            cerrado = true;
+            clearTimeout(t);
+            clearInterval(intervalo);
+            document.removeEventListener('visibilitychange', alVolver);
+            sb.removeChannel(canal);
+          }
+        };
+      }
+
+      // Supabase entrega máximo 1000 filas por consulta: se piden por páginas.
+      async function todasLasFilas(consulta) {
+        const out = [];
+        for (let i = 0; ; i += 1000) {
+          const { data, error } = await consulta().range(i, i + 999);
+          if (error) throw error;
+          out.push(...data);
+          if (data.length < 1000) break;
+        }
+        return out;
+      }
+
+      async function construirUsuario(user) {
+        const meta = user.user_metadata || {};
+        let esBarbero = false, barberoId = null;
+        let nombre = meta.nombre || user.email;
+        let telefono = meta.telefono || '';
+
+        const st = await sb.from('staff').select('barbero_id').eq('user_id', user.id).maybeSingle();
+        if (st.error) console.error(st.error);
+        else if (st.data && BARBEROS[st.data.barbero_id]) { esBarbero = true; barberoId = st.data.barbero_id; }
+
+        const pf = await sb.from('perfiles').select('nombre,telefono').eq('id', user.id).maybeSingle();
+        if (pf.error) console.error(pf.error);
+        else if (pf.data) { nombre = pf.data.nombre || nombre; telefono = pf.data.telefono || telefono; }
+
+        return { uid: user.id, email: user.email, nombre, telefono, esBarbero, barberoId };
+      }
+
+      const urlApp = () => location.origin + location.pathname;
+
+      return {
+        async init() {
+          const { createClient } = await import(SUPABASE_JS);
+          sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+          });
+        },
+
+        async cargarBarberos() {
+          const { data, error } = await sb.from('barberos').select('id,nombre,whatsapp,activo,abre_festivos,horario').order('orden');
+          if (error) throw error;
+          const out = {};
+          data.forEach(b => {
+            out[b.id] = { nombre: b.nombre, whatsapp: b.whatsapp, activo: b.activo, abreFestivos: b.abre_festivos, horario: b.horario || {} };
+          });
+          return out;
+        },
+
+        // Público y sin datos personales: solo barbero, fecha y hora.
+        vivirOcupados(cb) {
+          return vivo('horarios_ocupados', null, async () => {
+            const hoy = fechaLocal();
+            const { data, error } = await sb.from('horarios_ocupados').select('barbero_id,fecha,hora')
+              .gte('fecha', hoy).lte('fecha', sumarDias(hoy, DIAS_PARA_RESERVAR));
+            if (error) throw error;
+            return data.map(r => ({ barberoId: r.barbero_id, fecha: r.fecha, hora: r.hora }));
+          }, cb, 30000);
+        },
+
+        vivirDiasBloqueados(cb) {
+          return vivo('dias_bloqueados', null, async () => {
+            const { data, error } = await sb.from('dias_bloqueados').select('barbero_id,fecha').gte('fecha', fechaLocal());
+            if (error) throw error;
+            return data.map(r => ({ barberoId: r.barbero_id, fecha: r.fecha }));
+          }, cb, 120000);
+        },
+
+        vivirDiasAbiertos(cb) {
+          return vivo('dias_abiertos', null, async () => {
+            const { data, error } = await sb.from('dias_abiertos').select('barbero_id,fecha').gte('fecha', fechaLocal());
+            if (error) throw error;
+            return data.map(r => ({ barberoId: r.barbero_id, fecha: r.fecha }));
+          }, cb, 120000);
+        },
+
+        // El barbero trae SOLO sus citas (la seguridad de la base no deja ver otras).
+        vivirCitasBarbero(barberoId, cb) {
+          return vivo('citas', `barbero_id=eq.${barberoId}`, async () =>
+            (await todasLasFilas(() => sb.from('citas').select('*').eq('barbero_id', barberoId).order('fecha').order('hora'))).map(deCita),
+          cb, 60000);
+        },
+
+        // Citas pendientes del cliente que entró.
+        vivirMisCitas(uid, cb) {
+          return vivo('citas', `uid=eq.${uid}`, async () => {
+            const { data, error } = await sb.from('citas').select('*')
+              .eq('uid', uid).eq('estado', 'pendiente').gte('fecha', fechaLocal()).order('fecha').order('hora');
+            if (error) throw error;
+            return data.map(deCita);
+          }, cb, 60000);
+        },
+
+        vivirMiPerfil(uid, cb) {
+          return vivo('perfiles', `id=eq.${uid}`, async () => {
+            const { data, error } = await sb.from('perfiles').select('telegram_chat_id').eq('id', uid).maybeSingle();
+            if (error) throw error;
+            return { telegramChatId: data ? data.telegram_chat_id : null };
+          }, cb, 120000);
+        },
+
+        // Pregunta directo al servidor si la hora sigue libre.
+        async horaLibre(barberoId, fecha, hora) {
+          const { data, error } = await sb.from('horarios_ocupados').select('hora')
+            .eq('barbero_id', barberoId).eq('fecha', fecha).eq('hora', hora).limit(1);
+          if (error) throw error;
+          return data.length === 0;
+        },
+
+        // Todas las validaciones (hora libre, horario, festivo, día bloqueado) se repiten en el servidor.
+        async reservar(c) {
+          const { data, error } = await sb.rpc('reservar_cita', {
+            p_barbero: c.barberoId, p_fecha: c.fecha, p_hora: c.hora,
+            p_servicio: c.servicio, p_servicio_nombre: c.servicioNombre,
+            p_nombre: c.clienteNombre, p_telefono: c.clienteTelefono
+          });
+          if (error) {
+            const m = String(error.message || '');
+            const conocido = ['OCUPADO', 'DIA_BLOQUEADO', 'FUERA_DE_HORARIO', 'HORA_PASADA', 'FECHA_INVALIDA', 'NO_SESION', 'DATOS_INVALIDOS'].find(k => m.includes(k));
+            const e = new Error(conocido || m);
+            e.code = error.code;
+            throw e;
+          }
+          return data;
+        },
+
+        async bloquear(barberoId, fecha, hora) {
+          const { error } = await sb.from('citas').insert({
+            barbero_id: barberoId, fecha, hora, estado: 'bloqueada', cliente_nombre: 'Horario bloqueado'
+          });
+          if (error) {
+            if (error.code === '23505') throw new Error('OCUPADO');
+            throw error;
+          }
+        },
+
+        async cambiarEstado(cita, nuevo) {
+          const { error } = await sb.from('citas').update({ estado: nuevo }).eq('id', cita.id);
+          if (error) throw error;
+        },
+
+        async bloquearDias(barberoId, fechas) {
+          const { error } = await sb.from('dias_bloqueados')
+            .upsert(fechas.map(f => ({ barbero_id: barberoId, fecha: f })), { onConflict: 'barbero_id,fecha', ignoreDuplicates: true });
+          if (error) throw error;
+        },
+
+        async desbloquearDias(barberoId, fechas) {
+          const { error } = await sb.from('dias_bloqueados').delete().eq('barbero_id', barberoId).in('fecha', fechas);
+          if (error) throw error;
+        },
+
+        async abrirDia(barberoId, fecha) {
+          const { error } = await sb.from('dias_abiertos')
+            .upsert({ barbero_id: barberoId, fecha }, { onConflict: 'barbero_id,fecha', ignoreDuplicates: true });
+          if (error) throw error;
+        },
+
+        async cerrarDia(barberoId, fecha) {
+          const { error } = await sb.from('dias_abiertos').delete().eq('barbero_id', barberoId).eq('fecha', fecha);
+          if (error) throw error;
+        },
+
+        onSesion(cb, alRecuperarClave) {
+          sb.auth.onAuthStateChange((evento, session) => {
+            if (evento === 'PASSWORD_RECOVERY') setTimeout(alRecuperarClave, 0);
+            if (!['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT', 'USER_UPDATED'].includes(evento)) return;
+            // Supabase pide no hacer consultas dentro de este aviso: se hacen justo después.
+            setTimeout(async () => cb(session && session.user ? await construirUsuario(session.user) : null), 0);
+          });
+        },
+
+        async login(email, clave) {
+          const { error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password: clave });
+          if (error) throw error;
+        },
+
+        async registrar({ nombre, telefono, email, clave }) {
+          const { data, error } = await sb.auth.signUp({
+            email: email.trim().toLowerCase(),
+            password: clave,
+            options: { data: { nombre, telefono }, emailRedirectTo: urlApp() }
+          });
+          if (error) throw error;
+          return { necesitaConfirmar: !data.session };
+        },
+
+        async recuperarClave(email) {
+          const { error } = await sb.auth.resetPasswordForEmail(email.trim().toLowerCase(), { redirectTo: urlApp() });
+          if (error) throw error;
+        },
+
+        async nuevaClave(clave) {
+          const { error } = await sb.auth.updateUser({ password: clave });
+          if (error) throw error;
+        },
+
+        async logout() {
+          const { error } = await sb.auth.signOut();
+          if (error) throw error;
+        }
+      };
+    })();
+
+    /* =====================================================================
+       ESTADO Y NAVEGACIÓN
+       ===================================================================== */
+    const estado = {
+      usuario: null,
+      esBarbero: false,
+      miBarberoId: null,
+      sesionLista: false,
+      citas: [],
+      ocupados: [],
+      diasBloqueados: [],
+      diasAbiertos: [],
+      horaSel: '',
+      modo: 'dia',
+      resumenPeriodo: 'dia',
+      reservando: false,
+      misCitasLista: [],
+      vista: 'cliente',
+      reservaAbierta: false,
+      listo: false,
+      ocupadosAlDia: false  // true cuando la disponibilidad ya llegó del servidor
+    };
+    let subCitas = null, subPerfil = null, subMisCitas = null, subOcupados = null;
+
+    function mostrarVista(nombre) {
+      const otraVista = estado.vista !== nombre;
+      estado.vista = nombre;
+      const u = estado.usuario;
+
+      document.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === 'view-' + nombre));
+      $('btn-tab-cliente').classList.toggle('active', nombre === 'cliente');
+      $('btn-tab-barbero').classList.toggle('active', nombre === 'barbero');
+
+      const saludo = $('nav-saludo');
+      saludo.hidden = !u || estado.esBarbero;
+      saludo.textContent = u ? `Hola, ${String(u.nombre || u.email).split(' ')[0]}` : '';
+
+      $('btn-ingresar').hidden = !!u || nombre === 'login' || !estado.listo;
+      // El cliente NUNCA ve el panel; el barbero ve los dos.
+      $('btn-tab-cliente').hidden = !estado.esBarbero;
+      $('btn-tab-barbero').hidden = !estado.esBarbero;
+      $('btn-salir').hidden = !u;
+
+      if (nombre === 'barbero') renderPanel();
+      if (otraVista) window.scrollTo({ top: 0 });
+    }
+
+    function abrirAcceso(tab = 'login') {
+      document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.auth === tab));
+      $('form-login').hidden = tab !== 'login';
+      $('form-registro').hidden = tab !== 'registro';
+      $('login-error').textContent = '';
+      $('registro-error').textContent = '';
+      mostrarVista('login');
+    }
+
+    function actualizarReserva() {
+      const u = estado.usuario;
+      $('reserva-login').hidden = !!u;
+      $('reserva-box').hidden = !u;
+    }
+
+    function actualizarPanelReserva() {
+      $('reserva-contenido').hidden = !estado.reservaAbierta;
+      $('btn-reserva-toggle').setAttribute('aria-expanded', String(estado.reservaAbierta));
+      asegurarDisponibilidad();
+    }
+
+    function alternarPanelReserva() {
+      estado.reservaAbierta = !estado.reservaAbierta;
+      // Si quedó la tarjeta de confirmación, al cerrar y abrir vuelve el formulario limpio.
+      if (!estado.reservaAbierta && !$('confirmacion').hidden) cerrarConfirmacion();
+      actualizarPanelReserva();
+    }
+
+    // La disponibilidad se carga solo cuando alguien abre "Reservar cita".
+    function asegurarDisponibilidad() {
+      if (subOcupados || !estado.listo || !estado.reservaAbierta) return;
+      subOcupados = Store.vivirOcupados(lista => {
+        estado.ocupados = lista;
+        estado.ocupadosAlDia = true;
+        renderDiaStrip();
+        renderHorarios();
+      });
+    }
+
+    function alternarClientes() {
+      const abrir = $('clientes-contenido').hidden;
+      $('clientes-contenido').hidden = !abrir;
+      $('btn-clientes-toggle').setAttribute('aria-expanded', String(abrir));
+    }
+
+    // Con un solo barbero, queda elegido de una vez y no se muestra la opción.
+    function preseleccionarBarbero() {
+      const activos = barberosActivos();
+      $('grupo-barbero').hidden = activos.length <= 1;
+      if (activos.length === 1) {
+        $('select-barbero').value = activos[0];
+        const r = document.querySelector(`input[name="barbero"][value="${activos[0]}"]`);
+        if (r) r.checked = true;
+      }
+    }
+
+    function servicioElegido() {
+      const r = document.querySelector('input[name="servicio"]:checked');
+      return r ? r.value : '';
+    }
+
+    // Deja el formulario como nuevo: sin servicio, día ni hora elegidos.
+    function limpiarFormularioReserva() {
+      const nombre = $('cliente-nombre').value;
+      const tel = $('cliente-telefono').value;
+      $('form-reserva').reset();
+      $('cliente-nombre').value = nombre;
+      $('cliente-telefono').value = tel;
+      $('datos-cliente-wrap').hidden = true;
+      $('select-barbero').value = '';
+      $('select-fecha').value = '';
+      estado.horaSel = '';
+      preseleccionarBarbero();
+      renderDiaStrip();
+      renderHorarios();
+    }
+
+    function actualizarBarraTelegram(usuario, perfil) {
+      const barra = $('banner-telegram');
+      if (!usuario || !perfil || perfil.telegramChatId) {
+        barra.hidden = true;
+        return;
+      }
+      $('texto-telegram').textContent = usuario.esBarbero
+        ? 'Conecta Telegram para que te llegue cada cita nueva al instante'
+        : 'Conecta Telegram para recibir la confirmación y el recordatorio de tus citas';
+      $('btn-telegram-conectar').href = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${usuario.uid}`;
+      barra.hidden = false;
+    }
+
+    function citasFuturasPropias() {
+      return estado.misCitasLista
+        .filter(c => !horaPasada(c.fecha, c.hora))
+        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+    }
+
+    // Tarjeta "Tu cita programada": la ve el cliente apenas entra.
+    function renderMisCitasAviso(lista) {
+      if (lista) estado.misCitasLista = lista;
+      const cont = $('mis-citas-aviso');
+      cont.replaceChildren();
+      const futuras = estado.usuario ? citasFuturasPropias() : [];
+      if (futuras.length === 0 || !$('confirmacion').hidden) { cont.hidden = true; return; }
+
+      const titulo = el('div', 'mis-citas-titulo');
+      titulo.append(icono('fa-solid fa-calendar-check'), futuras.length === 1 ? 'Tu cita programada' : `Tus ${futuras.length} citas programadas`);
+      cont.appendChild(titulo);
+
+      futuras.forEach(c => {
+        const d = new Date(c.fecha + 'T12:00:00');
+        const item = el('div', 'mis-citas-item');
+        const chip = el('div', 'fecha-chip');
+        chip.append(el('small', null, c.fecha === fechaLocal() ? 'Hoy' : DIAS_ABREV[d.getDay()]), el('b', null, String(d.getDate())),
+          el('small', null, d.toLocaleDateString('es-CO', { month: 'short' }).replace('.', '')));
+        const det = el('div', 'detalle');
+        det.append(el('strong', null, `${formatoHora(c.hora)} · ${formatoFechaLarga(c.fecha)}`));
+        const serv = nombreServicio(c);
+        det.append(`${serv ? serv + ' con ' : 'Con '}${nombreBarbero(c.barberoId)}`);
+        item.append(chip, det);
+        cont.appendChild(item);
+      });
+
+      const nota = el('p', 'hint');
+      const wa = el('a', null, 'escríbenos por WhatsApp');
+      wa.href = `https://wa.me/${whatsappBarbero(futuras[0].barberoId)}?text=${encodeURIComponent('Hola, quiero cambiar o cancelar mi cita.')}`;
+      wa.target = '_blank';
+      wa.rel = 'noopener noreferrer';
+      nota.append('Para cambiar o cancelar, ', wa, '.');
+      cont.appendChild(nota);
+      cont.hidden = false;
+    }
+
+    function alCambiarSesion(usuario) {
+      const uidAntes = estado.usuario ? estado.usuario.uid : null;
+      const uidAhora = usuario ? usuario.uid : null;
+      const cambio = uidAntes !== uidAhora || !estado.sesionLista;
+      estado.sesionLista = true;
+
+      if (!cambio) { // misma cuenta (volvió a la pestaña o cambió la contraseña): no se toca nada
+        if (usuario) estado.usuario = usuario;
+        return;
+      }
+
+      estado.usuario = usuario;
+      estado.esBarbero = !!(usuario && usuario.esBarbero);
+      estado.miBarberoId = usuario ? usuario.barberoId : null;
+
+      [subCitas, subPerfil, subMisCitas].forEach(s => s && s.cerrar());
+      subCitas = subPerfil = subMisCitas = null;
+      estado.citas = [];
+      estado.misCitasLista = [];
+
+      if (estado.esBarbero && estado.miBarberoId) {
+        subCitas = Store.vivirCitasBarbero(estado.miBarberoId, lista => {
+          estado.citas = lista;
+          renderPanel();
+        });
+      }
+
+      if (usuario) {
+        subPerfil = Store.vivirMiPerfil(usuario.uid, perfil => actualizarBarraTelegram(usuario, perfil));
+        subMisCitas = Store.vivirMisCitas(usuario.uid, lista => renderMisCitasAviso(lista));
+      } else {
+        actualizarBarraTelegram(null, null);
+      }
+      renderMisCitasAviso([]);
+
+      $('cliente-nombre').value = usuario ? (usuario.nombre || '') : '';
+      $('cliente-telefono').value = usuario && usuario.telefono ? '+' + usuario.telefono : '';
+      cerrarConfirmacion();
+      if (usuario) {
+        if (estado.vista === 'login' && !usuario.esBarbero) {
+          estado.reservaAbierta = true; // venía de "Reservar cita": se le deja abierto
+          actualizarPanelReserva();
+        }
+        mostrarVista(usuario.esBarbero ? 'barbero' : 'cliente');
+      } else {
+        mostrarVista(estado.vista === 'barbero' ? 'cliente' : estado.vista);
+      }
+      actualizarReserva();
+    }
+
+    /* =====================================================================
+       ACCESO
+       ===================================================================== */
+    async function enviarLogin(e) {
+      e.preventDefault();
+      const err = $('login-error');
+      const email = $('login-email').value.trim();
+      const clave = $('login-pass').value;
+      err.textContent = '';
+      if (!email || !clave) { err.textContent = 'Escribe tu correo y tu contraseña.'; return; }
+
+      const btn = $('btn-login');
+      btn.disabled = true;
+      try {
+        await Store.login(email, clave);
+        $('login-pass').value = '';
+      } catch (ex) {
+        err.textContent = mensajeAuth(ex);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function enviarRegistro(e) {
+      e.preventDefault();
+      const err = $('registro-error');
+      const nombre = $('reg-nombre').value.trim();
+      const telefono = normalizarTelefono($('reg-telefono').value);
+      const email = $('reg-email').value.trim();
+      const clave = $('reg-pass').value;
+      err.textContent = '';
+
+      if (nombre.length < 2) { err.textContent = 'Escribe tu nombre completo.'; return; }
+      if (!telefono) { err.textContent = 'Ingresa un teléfono válido, por ejemplo 3001234567.'; return; }
+      if (!emailValido(email)) { err.textContent = 'Ingresa un correo válido.'; return; }
+      if (clave.length < 6) { err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+
+      const btn = $('btn-registro');
+      btn.disabled = true;
+      try {
+        const r = await Store.registrar({ nombre, telefono, email, clave });
+        $('form-registro').reset();
+        if (r.necesitaConfirmar) {
+          abrirAcceso('login');
+          $('login-email').value = email;
+          avisar('Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego inicia sesión.');
+        } else {
+          avisar('Cuenta creada. Ya puedes reservar tu cita.');
+        }
+      } catch (ex) {
+        console.error(ex);
+        err.textContent = mensajeAuth(ex);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function olvideClave() {
+      const err = $('login-error');
+      const email = $('login-email').value.trim();
+      err.textContent = '';
+      if (!emailValido(email)) {
+        err.textContent = 'Escribe tu correo arriba y vuelve a tocar "¿Olvidaste tu contraseña?".';
+        return;
+      }
+      try {
+        await Store.recuperarClave(email);
+        avisar('Te enviamos un correo para cambiar tu contraseña.');
+      } catch (ex) {
+        err.textContent = mensajeAuth(ex);
+      }
+    }
+
+    function abrirNuevaClave() {
+      $('nueva-clave').value = '';
+      $('clave-error').textContent = '';
+      if (!$('dlg-clave').open) $('dlg-clave').showModal();
+    }
+
+    async function guardarNuevaClave(e) {
+      e.preventDefault();
+      const clave = $('nueva-clave').value;
+      if (clave.length < 6) { $('clave-error').textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+      const btn = $('btn-clave-guardar');
+      btn.disabled = true;
+      try {
+        await Store.nuevaClave(clave);
+        $('dlg-clave').close();
+        avisar('Contraseña actualizada.');
+      } catch (ex) {
+        $('clave-error').textContent = mensajeAuth(ex);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    /* =====================================================================
+       VISTA DEL CLIENTE
+       ===================================================================== */
+    function poblarBarberos() {
+      const cont = $('barberos-opciones');
+      cont.replaceChildren();
+      barberosActivos().forEach(id => {
+        const lab = el('label', 'servicio-opcion');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'barbero';
+        input.value = id;
+        input.addEventListener('change', () => {
+          $('select-barbero').value = id;
+          $('select-fecha').value = '';
+          cambioSeleccion();
+        });
+        lab.append(input, el('span', null, BARBEROS[id].nombre));
+        cont.appendChild(lab);
+      });
+    }
+
+    function poblarServicios() {
+      const cont = $('servicios-opciones');
+      Object.entries(SERVICIOS).forEach(([id, s]) => {
+        const lab = el('label', 'servicio-opcion');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'servicio';
+        input.value = id;
+        const caja = el('span');
+        caja.append(el('b', null, s.nombre), el('span', null, formatoPrecio(s.precio)));
+        lab.append(input, caja);
+        cont.appendChild(lab);
+      });
+    }
+
+    function filaTablero(nombre, valor, clase) {
+      const fila = el('div', 'fila-tablero' + (clase ? ' ' + clase : ''));
+      fila.append(el('span', null, nombre), el('span', 'puntos'), el('span', 'valor', valor));
+      return fila;
+    }
+
+    // Lo que no depende de la base de datos: servicios, productos.
+    function renderInformacionFija() {
+      const serv = $('lista-servicios');
+      Object.values(SERVICIOS).forEach(s => serv.appendChild(filaTablero(s.nombre, formatoPrecio(s.precio))));
+
+      $('sec-otros').hidden = OTROS_SERVICIOS.length === 0;
+      const otros = $('lista-otros-servicios');
+      OTROS_SERVICIOS.forEach(s => otros.appendChild(filaTablero(s.nombre, formatoPrecio(s.precio))));
+
+      $('sec-productos').hidden = PRODUCTOS.length === 0;
+      const prod = $('lista-productos');
+      PRODUCTOS.forEach(p => {
+        const card = el('article', 'producto');
+        const img = document.createElement('img');
+        img.src = p.foto;
+        img.alt = p.nombre;
+        img.loading = 'lazy';
+        const info = el('div', 'producto-info');
+        info.append(
+          el('h3', null, p.nombre),
+          el('p', null, p.detalle),
+          el('span', 'producto-precio', p.precio ? formatoPrecio(p.precio) : 'Pregunta el precio')
+        );
+        const a = el('a');
+        a.href = `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(`Hola, quiero ${p.nombre}.`)}`;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.append(icono('fa-brands fa-whatsapp'), 'Pedir por WhatsApp');
+        info.appendChild(a);
+        card.append(img, info);
+        prod.appendChild(card);
+      });
+    }
+
+    // Horario y WhatsApp: vienen de la tabla barberos.
+    function renderInformacionBarberos() {
+      const hor = $('lista-horario');
+      hor.replaceChildren();
+      const nombres = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const activos = barberosActivos();
+      activos.forEach(id => {
+        const bloque = el('div', 'horario-barbero');
+        if (activos.length > 1) bloque.appendChild(el('h3', null, BARBEROS[id].nombre));
+        const tabla = el('div', 'tablero');
+        const h = horarioDe(id);
+        [1, 2, 3, 4, 5, 6, 0].forEach(d => {
+          const horas = h[d] || [];
+          if (!horas.length) { tabla.appendChild(filaTablero(nombres[d], 'Cerrado', 'cerrado')); return; }
+          const r = resumenHorario(horas);
+          tabla.appendChild(filaTablero(nombres[d], `${formatoHora(r.abre)} – ${formatoHora(r.cierra)}`));
+          if (r.pausas.length) {
+            tabla.appendChild(el('div', 'fila-nota',
+              r.pausas.map(([a, b]) => `Almuerzo de ${formatoHora(a)} a ${formatoHora(b)}`).join(' · ')));
+          }
+        });
+        bloque.appendChild(tabla);
+        hor.appendChild(bloque);
+      });
+      if (!activos.length) hor.appendChild(el('p', 'hint', 'Horario no disponible.'));
+
+      const redes = $('social-links');
+      redes.replaceChildren();
+      const enlace = (href, clasesIcono, texto, principal) => {
+        const a = el('a', 'social-btn' + (principal ? ' principal' : ''));
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.append(icono(clasesIcono), texto);
+        redes.appendChild(a);
+      };
+      if (activos.length > 1) {
+        activos.forEach(id => {
+          if (BARBEROS[id].whatsapp) enlace(`https://wa.me/${BARBEROS[id].whatsapp}`, 'fa-brands fa-whatsapp', `WhatsApp ${BARBEROS[id].nombre}`, true);
+        });
+      } else {
+        enlace(`https://wa.me/${activos.length ? whatsappBarbero(activos[0]) : NEGOCIO.whatsapp}`, 'fa-brands fa-whatsapp', 'Escríbenos por WhatsApp', true);
+      }
+      if (NEGOCIO.instagram) enlace(NEGOCIO.instagram, 'fa-brands fa-instagram', 'Instagram');
+      if (NEGOCIO.facebook) enlace(NEGOCIO.facebook, 'fa-brands fa-facebook', 'Facebook');
+      if (NEGOCIO.tiktok) enlace(NEGOCIO.tiktok, 'fa-brands fa-tiktok', 'TikTok');
+    }
+
+    const diaBloqueado = (barberoId, fecha) =>
+      estado.diasBloqueados.some(d => d.barberoId === barberoId && d.fecha === fecha);
+
+    const DIAS_ABREV = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    function horasOcupadas(barberoId, fecha) {
+      return new Set(estado.ocupados.filter(o => o.barberoId === barberoId && o.fecha === fecha).map(o => o.hora));
+    }
+
+    function renderDiaStrip() {
+      const cont = $('dia-strip');
+      const barberoId = $('select-barbero').value;
+      const scrollPrevio = cont.scrollLeft;
+      cont.replaceChildren();
+
+      if (!estado.listo || !Object.keys(BARBEROS).length) {
+        cont.appendChild(el('p', 'hint', 'Cargando horarios…'));
+        $('dias-prev').hidden = true;
+        $('dias-next').hidden = true;
+        return;
+      }
+      if (!barberoId) {
+        cont.appendChild(el('p', 'hint', 'Elige primero con quién quieres tu cita.'));
+        $('dias-prev').hidden = true;
+        $('dias-next').hidden = true;
+        return;
+      }
+
+      const hoy = fechaLocal();
+      const elegida = $('select-fecha').value;
+
+      for (let i = 0; i < DIAS_PARA_RESERVAR; i++) {
+        const fecha = sumarDias(hoy, i);
+        const d = new Date(fecha + 'T12:00:00');
+        const horasDia = horasDelDia(barberoId, fecha);
+        const cerrado = horasDia.length === 0 || diaBloqueado(barberoId, fecha);
+
+        let libres = 0;
+        if (!cerrado) {
+          const ocupadas = horasOcupadas(barberoId, fecha);
+          libres = horasDia.filter(h => !ocupadas.has(h) && !horaPasada(fecha, h)).length;
+        }
+        const sinCupos = !cerrado && libres === 0;
+
+        const btn = el('button', 'dia-card' + (fecha === elegida ? ' seleccionado' : ''));
+        btn.type = 'button';
+        btn.disabled = cerrado || sinCupos;
+        const estadoTexto = festivoCerrado(barberoId, fecha) ? 'Festivo' : cerrado ? 'Cerrado' : sinCupos ? 'Lleno' : `${libres} libre${libres === 1 ? '' : 's'}`;
+        btn.setAttribute('aria-label', `${formatoFechaLarga(fecha)}, ${estadoTexto}`);
+        btn.setAttribute('aria-pressed', String(fecha === elegida));
+        btn.append(
+          el('span', 'dia-card-abrev', i === 0 ? 'Hoy' : DIAS_ABREV[d.getDay()]),
+          el('span', 'dia-card-num', String(d.getDate())),
+          el('span', 'dia-card-estado', estadoTexto)
+        );
+        if (!btn.disabled) {
+          btn.addEventListener('click', () => {
+            $('select-fecha').value = fecha;
+            cambioSeleccion();
+          });
+        }
+        cont.appendChild(btn);
+      }
+      cont.scrollLeft = elegida ? scrollPrevio : 0;
+      $('dias-prev').hidden = false;
+      $('dias-next').hidden = false;
+    }
+
+    function mensajeHorarios(texto, advertencia) {
+      return el('small', 'slots-msg' + (advertencia ? ' warn' : ''), texto);
+    }
+
+    function renderHorarios() {
+      const grid = $('grid-horarios');
+      const barberoId = $('select-barbero').value;
+      const fecha = $('select-fecha').value;
+      grid.replaceChildren();
+
+      const sinHoras = texto => {
+        grid.appendChild(mensajeHorarios(texto, true));
+        estado.horaSel = '';
+        $('datos-cliente-wrap').hidden = true;
+      };
+
+      if (!barberoId || !fecha) {
+        grid.appendChild(mensajeHorarios('Elige un día para ver las horas libres.'));
+        estado.horaSel = '';
+        $('datos-cliente-wrap').hidden = true;
+        return;
+      }
+
+      if (festivoCerrado(barberoId, fecha)) return sinHoras(`Ese día es festivo (${nombreFestivo(fecha)}) y no atendemos. Elige otra fecha.`);
+      const horas = horasDelDia(barberoId, fecha);
+      if (horas.length === 0) return sinHoras('Ese día no atendemos. Elige otra fecha.');
+      if (diaBloqueado(barberoId, fecha)) return sinHoras(`${nombreBarbero(barberoId)} no atiende ese día. Elige otra fecha.`);
+
+      if (!estado.ocupadosAlDia) {
+        grid.appendChild(mensajeHorarios('Actualizando las horas disponibles…'));
+        $('datos-cliente-wrap').hidden = true;
+        return;
+      }
+
+      const ocupadas = horasOcupadas(barberoId, fecha);
+      if (estado.horaSel && ocupadas.has(estado.horaSel)) {
+        estado.horaSel = '';
+        if (!estado.reservando) avisar('Esa hora acaba de ser tomada. Elige otra.', 'error');
+      }
+
+      horas.forEach(hora => {
+        const btn = el('button', 'slot-btn', formatoHora(hora));
+        btn.type = 'button';
+        if (ocupadas.has(hora) || horaPasada(fecha, hora)) {
+          btn.classList.add('blocked');
+          btn.disabled = true;
+          btn.setAttribute('aria-label', `${formatoHora(hora)}, no disponible`);
+        } else {
+          const elegida = hora === estado.horaSel;
+          btn.classList.toggle('selected', elegida);
+          btn.setAttribute('aria-pressed', String(elegida));
+          btn.addEventListener('click', async () => {
+            estado.horaSel = hora;
+            grid.querySelectorAll('.slot-btn').forEach(b => {
+              b.classList.remove('selected');
+              if (!b.disabled) b.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('selected');
+            btn.setAttribute('aria-pressed', 'true');
+            $('datos-cliente-wrap').hidden = false;
+
+            // Doble revisión con el servidor: si otra persona la tomó hace un momento, se avisa ya.
+            let libre = true;
+            try { libre = await Store.horaLibre(barberoId, fecha, hora); } catch (e) { /* sin conexión: la reserva igual lo valida */ }
+            if (!libre && estado.horaSel === hora) {
+              estado.ocupados.push({ barberoId, fecha, hora });
+              estado.horaSel = '';
+              avisar('Esa hora ya está ocupada. Elige otra.', 'error');
+              renderDiaStrip();
+              renderHorarios();
+            }
+          });
+        }
+        grid.appendChild(btn);
+      });
+      $('datos-cliente-wrap').hidden = !estado.horaSel;
+    }
+
+    function cambioSeleccion() {
+      estado.horaSel = '';
+      $('datos-cliente-wrap').hidden = true;
+      renderDiaStrip();
+      renderHorarios();
+    }
+
+    // TARJETA "CITA CONFIRMADA": el formulario de atrás queda limpio (sin día ni hora)
+    // y solo se ve el anuncio. Al tocar "Listo" vuelve el formulario normal.
+    function mostrarConfirmacion(cita) {
+      const box = $('confirmacion');
+      box.replaceChildren();
+
+      box.appendChild(icono('fa-solid fa-circle-check confirmacion-check'));
+      box.appendChild(el('strong', 'confirmacion-titulo', 'Cita confirmada'));
+      box.appendChild(el('span', 'confirmacion-detalle', `${formatoFechaLarga(cita.fecha)}, ${formatoHora(cita.hora)}`));
+      const serv = SERVICIOS[cita.servicio];
+      box.appendChild(el('span', null, `${serv.nombre} con ${nombreBarbero(cita.barberoId)} · ${formatoPrecio(serv.precio)}`));
+      box.appendChild(el('span', 'confirmacion-nota',
+        `Te llega la confirmación a tu correo (y a Telegram, si lo conectaste). ${RECORDATORIO_MINUTOS} minutos antes te enviamos un recordatorio.`));
+
+      const btnListo = el('button', 'btn', 'Listo');
+      btnListo.type = 'button';
+      btnListo.addEventListener('click', () => {
+        cerrarConfirmacion();
+        $('mis-citas-aviso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      box.appendChild(btnListo);
+
+      limpiarFormularioReserva();
+      $('form-reserva').hidden = true;
+      $('mis-citas-aviso').hidden = true;
+      box.hidden = false;
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function cerrarConfirmacion() {
+      const box = $('confirmacion');
+      box.hidden = true;
+      box.replaceChildren();
+      $('form-reserva').hidden = false;
+      limpiarFormularioReserva();
+      renderMisCitasAviso();
+    }
+
+    // Letrero "Ya tienes una cita…": resuelve true si el cliente quiere sacar otra.
+    function confirmarOtraCita(futuras) {
+      const cont = $('dlg-otra-detalle');
+      cont.replaceChildren();
+      futuras.forEach(c => {
+        const serv = nombreServicio(c);
+        cont.appendChild(el('p', null, `${formatoFechaLarga(c.fecha)}, ${formatoHora(c.hora)} con ${nombreBarbero(c.barberoId)}${serv ? ', ' + serv : ''}`));
+      });
+      $('dlg-otra-titulo').textContent = futuras.length === 1 ? 'Ya tienes una cita' : `Ya tienes ${futuras.length} citas`;
+      const dlg = $('dlg-otra-cita');
+      return new Promise(resolve => {
+        const cerrar = valor => {
+          $('btn-otra-si').onclick = null;
+          $('btn-otra-no').onclick = null;
+          dlg.onclose = null;
+          if (dlg.open) dlg.close();
+          resolve(valor);
+        };
+        $('btn-otra-si').onclick = () => cerrar(true);
+        $('btn-otra-no').onclick = () => cerrar(false);
+        dlg.onclose = () => cerrar(false); // tecla Escape = no
+        dlg.showModal();
+      });
+    }
+
+    async function enviarReserva(e) {
+      e.preventDefault();
+
+      if (!estado.usuario) {
+        avisar('Inicia sesión para reservar tu cita.', 'error');
+        abrirAcceso('login');
+        return;
+      }
+
+      const nombre = $('cliente-nombre').value.trim();
+      const telefono = normalizarTelefono($('cliente-telefono').value);
+      const barberoId = $('select-barbero').value;
+      const servicio = servicioElegido();
+      const fecha = $('select-fecha').value;
+      const hora = estado.horaSel;
+
+      if (!barberoId) return avisar('Selecciona un barbero.', 'error');
+      if (!servicio) return avisar('Elige el servicio que quieres.', 'error');
+      if (!fecha) return avisar('Elige un día.', 'error');
+      if (!hora) return avisar('Elige una hora libre.', 'error');
+      if (nombre.length < 2) return avisar('Escribe tu nombre completo.', 'error');
+      if (!telefono) return avisar('Ingresa un teléfono válido, por ejemplo 3001234567.', 'error');
+      if (diaBloqueado(barberoId, fecha)) return avisar(`${nombreBarbero(barberoId)} no atiende ese día.`, 'error');
+      if (horaPasada(fecha, hora)) {
+        estado.horaSel = '';
+        renderHorarios();
+        return avisar('Esa hora ya pasó. Elige otra.', 'error');
+      }
+
+      const futuras = citasFuturasPropias();
+      if (futuras.length > 0 && !(await confirmarOtraCita(futuras))) {
+        avisar('Listo, tu cita sigue como estaba.');
+        return;
+      }
+
+      const btn = $('btn-reservar');
+      btn.disabled = true;
+      estado.reservando = true;
+      try {
+        const cita = {
+          clienteNombre: nombre, clienteTelefono: telefono, barberoId,
+          servicio, servicioNombre: SERVICIOS[servicio].nombre, fecha, hora
+        };
+        await Store.reservar(cita);
+        estado.usuario.nombre = nombre;
+        estado.usuario.telefono = telefono;
+        // Se muestra ya mismo en "Tu cita programada" (el tiempo real lo confirma enseguida).
+        estado.misCitasLista = [...estado.misCitasLista, { ...cita, estado: 'pendiente' }];
+        mostrarConfirmacion(cita);
+      } catch (err) {
+        const codigo = err && err.message;
+        const mensajes = {
+          OCUPADO: 'Esa hora acaba de ser tomada. Elige otra.',
+          DIA_BLOQUEADO: `${nombreBarbero(barberoId)} no atiende ese día.`,
+          FUERA_DE_HORARIO: 'Esa hora ya no está disponible. Elige otra.',
+          HORA_PASADA: 'Esa hora ya pasó. Elige otra.',
+          FECHA_INVALIDA: 'Esa fecha no se puede reservar.',
+          NO_SESION: 'Tu sesión se cerró. Inicia sesión otra vez.',
+          DATOS_INVALIDOS: 'Revisa tu nombre y tu teléfono.'
+        };
+        if (mensajes[codigo]) {
+          avisar(mensajes[codigo], 'error');
+          if (codigo !== 'DATOS_INVALIDOS') { estado.horaSel = ''; renderHorarios(); }
+          if (codigo === 'OCUPADO' && subOcupados) subOcupados.recargar();
+        } else {
+          console.error(err);
+          avisar('No se pudo guardar la cita. Revisa tu conexión e inténtalo de nuevo.', 'error');
+        }
+      } finally {
+        estado.reservando = false;
+        btn.disabled = false;
+      }
+    }
+
+    /* ---------- Galería ---------- */
+    function probarFoto(n) {
+      return new Promise(resolve => {
+        const src = `img/trabajos/trabajo-${pad(n)}.jpg`;
+        const img = new Image();
+        img.onload = () => resolve({ n, src, ok: true });
+        img.onerror = () => resolve({ n, src, ok: false });
+        img.src = src;
+      });
+    }
+
+    async function renderGaleria() {
+      const POR_PAGINA = 6;
+      const resultados = await Promise.all(Array.from({ length: TOTAL_CUPOS_GALERIA }, (_, i) => probarFoto(i + 1)));
+      const fotos = resultados.filter(r => r.ok);
+
+      const cont = $('gallery-grid');
+      const puntos = $('gallery-dots');
+      cont.replaceChildren();
+      puntos.replaceChildren();
+
+      if (fotos.length === 0) {
+        cont.appendChild(el('p', 'empty-msg', 'Pronto subiremos fotos de nuestros cortes.'));
+        return;
+      }
+
+      const totalPaginas = Math.ceil(fotos.length / POR_PAGINA);
+      for (let p = 0; p < totalPaginas; p++) {
+        const pagina = el('div', 'galeria-pagina');
+        fotos.slice(p * POR_PAGINA, p * POR_PAGINA + POR_PAGINA).forEach(f => {
+          const item = el('div', 'gallery-item');
+          item.setAttribute('role', 'button');
+          item.tabIndex = 0;
+          item.setAttribute('aria-label', `Ampliar foto de corte ${f.n}`);
+          const img = document.createElement('img');
+          img.loading = 'lazy';
+          img.src = f.src;
+          img.alt = `Corte realizado en Barbería Yeiko, foto ${f.n}`;
+          item.appendChild(img);
+          pagina.appendChild(item);
+        });
+        cont.appendChild(pagina);
+        puntos.appendChild(el('span', 'punto-pagina' + (p === 0 ? ' activo' : '')));
+      }
+
+      const varias = totalPaginas > 1;
+      $('galeria-prev').hidden = !varias;
+      $('galeria-next').hidden = !varias;
+      puntos.hidden = !varias;
+
+      cont.addEventListener('scroll', () => {
+        const idx = Math.round(cont.scrollLeft / cont.clientWidth);
+        [...puntos.children].forEach((pt, i) => pt.classList.toggle('activo', i === idx));
+      });
+    }
+
+    function ampliarFoto(item) {
+      const img = item.querySelector('img');
+      $('img-ampliada').src = img.src;
+      $('img-ampliada').alt = img.alt;
+      $('modal-lightbox').style.display = 'flex';
+      $('modal-lightbox').querySelector('.modal-close-btn').focus();
+    }
+
+    function cerrarFoto() {
+      $('modal-lightbox').style.display = 'none';
+    }
+
+    /* =====================================================================
+       PANEL DEL BARBERO (solo lo ve la cuenta que está en la tabla staff)
+       ===================================================================== */
+    const esCitaReal = c => c.estado !== 'bloqueada' && c.estado !== 'cancelada';
+
+    function fechaReferenciaPanel() {
+      const fh = $('filtro-fecha-historico').value;
+      if (estado.modo === 'historico' && fh) return fh;
+      return $('filtro-fecha-barbero').value || fechaLocal();
+    }
+
+    function renderResumen(todas) {
+      const fecha = fechaReferenciaPanel();
+      let desde = fecha, hasta = fecha, texto = formatoFechaLarga(fecha);
+      if (estado.resumenPeriodo === 'semana') {
+        desde = inicioSemana(fecha); hasta = finSemana(fecha);
+        texto = `Semana del ${formatoFecha(desde)} al ${formatoFecha(hasta)}`;
+      } else if (estado.resumenPeriodo === 'mes') {
+        desde = inicioMes(fecha); hasta = finMes(fecha);
+        const m = new Date(fecha + 'T12:00:00').toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+        texto = m.charAt(0).toUpperCase() + m.slice(1);
+      }
+
+      const enRango = todas.filter(c => c.fecha >= desde && c.fecha <= hasta);
+      const completadas = enRango.filter(c => c.estado === 'completada');
+      const ingresos = completadas.reduce((s, c) => s + (SERVICIOS[c.servicio] ? SERVICIOS[c.servicio].precio : 0), 0);
+
+      $('resumen-total').textContent = enRango.filter(esCitaReal).length;
+      $('resumen-completadas').textContent = completadas.length;
+      $('resumen-pendientes').textContent = enRango.filter(c => c.estado === 'pendiente').length;
+      $('resumen-ingresos').textContent = formatoPrecio(ingresos);
+      $('resumen-rango-texto').textContent = texto;
+    }
+
+    function renderClientes(todas) {
+      const porClave = new Map();
+      todas
+        .filter(c => esCitaReal(c) && (c.uid || c.clienteTelefono))
+        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))
+        .forEach(c => {
+          const clave = c.uid || c.clienteTelefono;
+          const previo = porClave.get(clave);
+          porClave.set(clave, {
+            nombre: c.clienteNombre || 'Cliente', telefono: c.clienteTelefono,
+            visitas: (previo ? previo.visitas : 0) + (c.estado === 'completada' ? 1 : 0)
+          });
+        });
+
+      const clientes = [...porClave.values()].sort((a, b) => a.nombre.localeCompare(b.nombre));
+      const cont = $('lista-clientes');
+      cont.replaceChildren();
+
+      if (clientes.length === 0) {
+        cont.appendChild(el('p', 'empty-msg', 'Aquí aparecerán los clientes que reserven contigo.'));
+      } else {
+        clientes.forEach(c => {
+          const fila = el('div', 'card');
+          const info = el('div', 'card-info');
+          info.appendChild(el('h3', null, c.nombre));
+          const p = el('p');
+          if (c.telefono) p.append(icono('fa-solid fa-phone'), ` +${c.telefono}   `);
+          p.append(`${c.visitas} visita${c.visitas === 1 ? '' : 's'} realizada${c.visitas === 1 ? '' : 's'}`);
+          info.appendChild(p);
+          fila.appendChild(info);
+          if (c.telefono) {
+            const wa = el('a', 'action-btn');
+            wa.href = `https://wa.me/${String(c.telefono).replace(/\D/g, '')}`;
+            wa.target = '_blank';
+            wa.rel = 'noopener noreferrer';
+            wa.style.color = '#25D366';
+            wa.setAttribute('aria-label', `Escribir por WhatsApp a ${c.nombre}`);
+            wa.appendChild(icono('fa-brands fa-whatsapp'));
+            fila.appendChild(wa);
+          }
+          cont.appendChild(fila);
+        });
+      }
+      $('clientes-total').textContent = `Total de clientes: ${clientes.length}`;
+    }
+
+    function renderAgendaStrip(todas) {
+      const cont = $('bdia-strip');
+      const scrollPrevio = cont.scrollLeft;
+      cont.replaceChildren();
+
+      const hoy = fechaLocal();
+      const elegida = $('filtro-fecha-barbero').value || hoy;
+      const yo = estado.miBarberoId;
+
+      const porFecha = {};
+      todas.filter(esCitaReal).forEach(c => { porFecha[c.fecha] = (porFecha[c.fecha] || 0) + 1; });
+
+      for (let i = 0; i <= DIAS_PARA_RESERVAR; i++) {
+        const fecha = sumarDias(hoy, i);
+        const d = new Date(fecha + 'T12:00:00');
+        const cerrado = horasDelDia(yo, fecha).length === 0;
+        const festivo = festivoCerrado(yo, fecha);
+        const descanso = !cerrado && diaBloqueado(yo, fecha);
+        const n = porFecha[fecha] || 0;
+
+        let clases = 'dia-card';
+        if (fecha === elegida) clases += ' seleccionado';
+        if (cerrado || descanso) clases += ' inactivo';
+        else if (n === 0) clases += ' sin-citas';
+
+        const btn = el('button', clases);
+        btn.type = 'button';
+        btn.append(
+          el('span', 'dia-card-abrev', i === 0 ? 'Hoy' : DIAS_ABREV[d.getDay()]),
+          el('span', 'dia-card-num', String(d.getDate())),
+          el('span', 'dia-card-estado', festivo ? 'Festivo' : cerrado ? 'Cerrado' : descanso ? 'Descanso' : `${n} cita${n === 1 ? '' : 's'}`)
+        );
+        btn.addEventListener('click', () => {
+          $('filtro-fecha-barbero').value = fecha;
+          renderPanel();
+        });
+        cont.appendChild(btn);
+      }
+      cont.scrollLeft = scrollPrevio;
+      $('agenda-dia-texto').textContent = formatoFechaLarga(elegida);
+    }
+
+    function renderPanel() {
+      if (!estado.esBarbero) return;
+
+      $('panel-titulo').textContent = `Panel de ${nombreBarbero(estado.miBarberoId)}`;
+
+      const hoy = fechaLocal();
+      const todas = estado.citas;
+
+      const reales = todas.filter(esCitaReal);
+      const deHoy = reales.filter(c => c.fecha === hoy);
+      $('cnt-historico-total').textContent = reales.length;
+      $('cnt-totales').textContent = deHoy.length;
+      $('cnt-pendientes').textContent = deHoy.filter(c => c.estado === 'pendiente').length;
+      $('cnt-completadas').textContent = deHoy.filter(c => c.estado === 'completada').length;
+
+      $('agenda-dia-wrap').hidden = estado.modo !== 'dia';
+      $('agenda-historico-wrap').hidden = estado.modo !== 'historico';
+
+      renderAgendaStrip(todas);
+      renderDiasBloqueados();
+      renderDiasAbiertos();
+      renderResumen(todas);
+      renderClientes(todas);
+
+      let lista;
+      let avisos = [];
+      if (estado.modo === 'dia') {
+        const fecha = $('filtro-fecha-barbero').value || hoy;
+        lista = todas.filter(c => c.fecha === fecha && c.estado !== 'cancelada').sort((a, b) => a.hora.localeCompare(b.hora));
+        avisos = estado.diasBloqueados.filter(d => d.fecha === fecha && d.barberoId === estado.miBarberoId);
+      } else {
+        const fh = $('filtro-fecha-historico').value;
+        lista = todas.filter(c => !fh || c.fecha === fh)
+          .sort((a, b) => b.fecha.localeCompare(a.fecha) || a.hora.localeCompare(b.hora));
+        if (fh) avisos = estado.diasBloqueados.filter(d => d.fecha === fh && d.barberoId === estado.miBarberoId);
+      }
+
+      const cont = $('lista-citas-barbero');
+      cont.replaceChildren();
+      avisos.forEach(d => cont.appendChild(tarjetaDiaBloqueado(d)));
+
+      let tarjeta = null;
+      if (estado.modo === 'dia') {
+        const fecha = $('filtro-fecha-barbero').value || hoy;
+        const b = BARBEROS[estado.miBarberoId];
+        if (nombreFestivo(fecha) && fecha >= hoy && b && !b.abreFestivos) {
+          tarjeta = tarjetaFestivo(fecha);
+          if (tarjeta) cont.appendChild(tarjeta);
+        }
+      }
+
+      if (lista.length === 0 && avisos.length === 0 && !tarjeta) {
+        cont.appendChild(el('p', 'empty-msg', estado.modo === 'dia' ? 'No tienes citas este día.' : 'No hay citas en esa fecha.'));
+        return;
+      }
+      lista.forEach(c => cont.appendChild(tarjetaCita(c)));
+    }
+
+    function agruparDias(lista) {
+      const fechas = lista.map(d => d.fecha).sort();
+      const grupos = [];
+      let actual = null;
+      fechas.forEach(f => {
+        if (actual && sumarDias(actual.hasta, 1) === f) {
+          actual.hasta = f;
+          actual.dias.push(f);
+        } else {
+          actual = { desde: f, hasta: f, dias: [f] };
+          grupos.push(actual);
+        }
+      });
+      return grupos;
+    }
+
+    function renderDiasBloqueados() {
+      const cont = $('lista-dias-bloqueados');
+      cont.replaceChildren();
+      const hoy = fechaLocal();
+      const lista = estado.diasBloqueados.filter(d => d.fecha >= hoy && d.barberoId === estado.miBarberoId);
+
+      if (lista.length === 0) {
+        cont.appendChild(el('p', 'hint', 'No tienes días bloqueados. Usa "Bloquear día(s)" para marcar tu descanso.'));
+        return;
+      }
+
+      agruparDias(lista).forEach(g => {
+        const rango = g.desde === g.hasta ? formatoFecha(g.desde) : `${formatoFecha(g.desde)} a ${formatoFecha(g.hasta)}`;
+        const chip = el('div', 'chip');
+        chip.append(icono('fa-solid fa-calendar-xmark'), el('span', null, rango));
+        const quitar = el('button', 'chip-btn');
+        quitar.type = 'button';
+        quitar.title = 'Quitar bloqueo';
+        quitar.setAttribute('aria-label', `Quitar bloqueo: ${rango}`);
+        quitar.appendChild(icono('fa-solid fa-xmark'));
+        quitar.addEventListener('click', () => quitarBloqueoDias(g));
+        chip.appendChild(quitar);
+        cont.appendChild(chip);
+      });
+    }
+
+    function renderDiasAbiertos() {
+      const cont = $('lista-dias-abiertos');
+      cont.replaceChildren();
+      const hoy = fechaLocal();
+      const lista = estado.diasAbiertos
+        .filter(d => d.fecha >= hoy && d.barberoId === estado.miBarberoId)
+        .sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+      if (lista.length === 0) {
+        cont.appendChild(el('p', 'hint', 'Para trabajar un festivo, tócalo en la Agenda y elige "Habilitar este día".'));
+        return;
+      }
+      lista.forEach(d => {
+        const chip = el('div', 'chip');
+        chip.append(icono('fa-solid fa-lock-open'), el('span', null, formatoFecha(d.fecha) + (nombreFestivo(d.fecha) ? ' (festivo)' : '')));
+        const quitar = el('button', 'chip-btn');
+        quitar.type = 'button';
+        quitar.title = 'Volver a cerrar';
+        quitar.setAttribute('aria-label', `Volver a cerrar ${formatoFecha(d.fecha)}`);
+        quitar.appendChild(icono('fa-solid fa-xmark'));
+        quitar.addEventListener('click', async () => {
+          if (!confirm(`¿Volver a cerrar el ${formatoFechaLarga(d.fecha)}?`)) return;
+          try {
+            await Store.cerrarDia(d.barberoId, d.fecha);
+            avisar('Día cerrado otra vez.');
+          } catch (err) {
+            console.error(err);
+            avisar('No se pudo cerrar el día.', 'error');
+          }
+        });
+        chip.appendChild(quitar);
+        cont.appendChild(chip);
+      });
+    }
+
+    async function quitarBloqueoDias(g) {
+      const detalle = g.dias.length === 1 ? formatoFecha(g.desde) : `${g.dias.length} días (${formatoFecha(g.desde)} a ${formatoFecha(g.hasta)})`;
+      if (!confirm(`¿Quitar el bloqueo de ${detalle}? Los clientes podrán volver a reservar.`)) return;
+      try {
+        await Store.desbloquearDias(estado.miBarberoId, g.dias);
+        avisar('Bloqueo quitado.');
+      } catch (err) {
+        console.error(err);
+        avisar('No se pudo quitar el bloqueo.', 'error');
+      }
+    }
+
+    function tarjetaDiaBloqueado(d) {
+      const card = el('div', 'card card-descanso');
+      const info = el('div', 'card-info');
+      const h3 = el('h3');
+      h3.append('Día de descanso ', el('span', 'badge badge-bloqueada', 'bloqueado'));
+      info.append(h3, el('p', null, 'Los clientes no pueden reservar este día.'));
+
+      const acciones = el('div', 'card-actions');
+      acciones.appendChild(botonAccion('fa-solid fa-lock-open', 'var(--alerta)', 'Quitar bloqueo del día', async () => {
+        try {
+          await Store.desbloquearDias(d.barberoId, [d.fecha]);
+          avisar('Bloqueo quitado.');
+        } catch (err) {
+          console.error(err);
+          avisar('No se pudo quitar el bloqueo.', 'error');
+        }
+      }));
+      card.append(info, acciones);
+      return card;
+    }
+
+    // Festivo: el barbero puede habilitarlo para trabajar, o volver a cerrarlo.
+    function tarjetaFestivo(fecha) {
+      const yo = estado.miBarberoId;
+      const dia = new Date(fecha + 'T12:00:00').getDay();
+      const horas = (horarioDe(yo)[dia] || []).slice().sort();
+      if (!horas.length) return null;
+      const abierto = diaAbierto(yo, fecha);
+      const festivo = nombreFestivo(fecha);
+      const r = resumenHorario(horas);
+
+      const card = el('div', 'card card-descanso');
+      const info = el('div', 'card-info');
+      const h3 = el('h3');
+      h3.append(abierto ? `Festivo habilitado: ${festivo} ` : `Festivo: ${festivo} `,
+        el('span', abierto ? 'badge badge-completada' : 'badge badge-bloqueada', abierto ? 'habilitado' : 'cerrado'));
+      info.append(h3, el('p', null, abierto
+        ? `Los clientes pueden reservar de ${formatoHora(r.abre)} a ${formatoHora(r.cierra)}.`
+        : 'Los clientes no pueden reservar. Si vas a trabajar este día, habilítalo.'));
+
+      const acciones = el('div', 'card-actions');
+      const btn = el('button', 'action-btn', abierto ? 'Volver a cerrar' : 'Habilitar este día');
+      btn.type = 'button';
+      btn.prepend(icono(abierto ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open'), ' ');
+      btn.style.color = abierto ? 'var(--alerta)' : 'var(--ok)';
+      btn.addEventListener('click', async () => {
+        try {
+          if (abierto) {
+            const pendientes = estado.citas.filter(c => c.fecha === fecha && c.estado === 'pendiente').length;
+            const extra = pendientes ? ` Tienes ${pendientes} cita(s) ese día: siguen en tu lista para que las canceles o avises.` : '';
+            if (!confirm(`¿Volver a cerrar el ${formatoFechaLarga(fecha)}?${extra}`)) return;
+            await Store.cerrarDia(yo, fecha);
+            avisar('Día cerrado otra vez.');
+          } else {
+            if (!confirm(`¿Habilitar el ${formatoFechaLarga(fecha)} para que los clientes puedan reservar?`)) return;
+            await Store.abrirDia(yo, fecha);
+            avisar('Festivo habilitado. Los clientes ya pueden reservar.');
+          }
+        } catch (err) {
+          console.error(err);
+          avisar('No se pudo cambiar el día. Inténtalo de nuevo.', 'error');
+        }
+      });
+      acciones.appendChild(btn);
+      card.append(info, acciones);
+      return card;
+    }
+
+    function tarjetaCita(c) {
+      const est = ESTADOS.includes(c.estado) ? c.estado : 'pendiente';
+      const tel = String(c.clienteTelefono || '').replace(/\D/g, '');
+      const textoEstado = { pendiente: 'pendiente', completada: 'realizada', cancelada: 'cancelada', bloqueada: 'bloqueada' }[est];
+
+      const card = el('div', 'card' + (est === 'bloqueada' ? ' card-bloqueada' : ''));
+      const info = el('div', 'card-info');
+      const h3 = el('h3');
+      h3.append(`${formatoHora(c.hora)} – ${c.clienteNombre || 'Cliente'}`);
+      h3.append(el('span', `badge badge-${est}`, textoEstado));
+
+      const p = el('p');
+      p.append(icono('fa-solid fa-calendar'), ` ${formatoFecha(c.fecha)}`);
+      const serv = textoServicio(c);
+      if (serv && est !== 'bloqueada') p.append('   ', icono('fa-solid fa-scissors'), ` ${serv}`);
+      if (est !== 'bloqueada' && tel) p.append('   ', icono('fa-solid fa-phone'), ` +${tel}`);
+      info.append(h3, p);
+
+      const acciones = el('div', 'card-actions');
+      if (est === 'pendiente') {
+        acciones.append(
+          botonAccion('fa-solid fa-check', 'var(--ok)', 'Marcar como realizada', () => actualizarCita(c, 'completada')),
+          botonAccion('fa-solid fa-xmark', 'var(--peligro)', 'Cancelar cita', () => {
+            if (confirm(`¿Cancelar la cita de ${c.clienteNombre} de las ${formatoHora(c.hora)}? La hora queda libre para otros clientes.`)) actualizarCita(c, 'cancelada');
+          })
+        );
+      }
+      if (est === 'completada') {
+        acciones.append(botonAccion('fa-solid fa-rotate-left', 'var(--gris)', 'Volver a pendiente', () => actualizarCita(c, 'pendiente')));
+      }
+      if (est === 'bloqueada') {
+        acciones.append(botonAccion('fa-solid fa-lock-open', 'var(--alerta)', 'Liberar hora', () => actualizarCita(c, 'cancelada')));
+      }
+      if (est !== 'bloqueada' && tel) {
+        const wa = el('a', 'action-btn');
+        wa.href = `https://wa.me/${tel}`;
+        wa.target = '_blank';
+        wa.rel = 'noopener noreferrer';
+        wa.style.color = '#25D366';
+        wa.setAttribute('aria-label', `Escribir por WhatsApp a ${c.clienteNombre}`);
+        wa.appendChild(icono('fa-brands fa-whatsapp'));
+        acciones.appendChild(wa);
+      }
+      card.append(info, acciones);
+      return card;
+    }
+
+    function botonAccion(claseIcono, color, etiqueta, onClick) {
+      const b = el('button', 'action-btn');
+      b.type = 'button';
+      b.style.color = color;
+      b.title = etiqueta;
+      b.setAttribute('aria-label', etiqueta);
+      b.appendChild(icono(claseIcono));
+      b.addEventListener('click', onClick);
+      return b;
+    }
+
+    async function actualizarCita(cita, nuevoEstado) {
+      try {
+        await Store.cambiarEstado(cita, nuevoEstado);
+        if (nuevoEstado === 'completada') avisar('Cita marcada como realizada.');
+        if (nuevoEstado === 'cancelada') avisar(cita.estado === 'bloqueada' ? 'Hora liberada.' : 'Cita cancelada. La hora quedó libre.');
+      } catch (err) {
+        console.error(err);
+        avisar(err && err.code === '23505' ? 'Esa hora ya la tomó otra cita.' : 'No se pudo actualizar la cita.', 'error');
+      }
+    }
+
+    /* ---------- Respaldo en Excel (CSV) ---------- */
+    function descargarRespaldo() {
+      if (!estado.citas.length) return avisar('Todavía no hay citas para respaldar.', 'error');
+      const columnas = [
+        ['Fecha', c => c.fecha], ['Hora', c => formatoHora(c.hora)], ['Estado', c => c.estado],
+        ['Cliente', c => c.clienteNombre], ['Teléfono', c => c.clienteTelefono ? '+' + c.clienteTelefono : ''],
+        ['Correo', c => c.clienteEmail], ['Servicio', c => nombreServicio(c)],
+        ['Precio', c => (SERVICIOS[c.servicio] ? SERVICIOS[c.servicio].precio : '')],
+        ['Creada', c => (c.creadaEn ? new Date(c.creadaEn).toLocaleString('es-CO') : '')]
+      ];
+      const celda = v => {
+        const s = String(v ?? '');
+        return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const filas = [...estado.citas]
+        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))
+        .map(c => columnas.map(([, f]) => celda(f(c))).join(';'));
+      const csv = '﻿' + [columnas.map(([t]) => t).join(';'), ...filas].join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `respaldo-citas-yeiko-${fechaLocal()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      avisar('Respaldo descargado.');
+    }
+
+    /* ---------- Bloquear una hora ---------- */
+    function actualizarHorasBloqueo() {
+      const sel = $('bloq-hora');
+      const actual = sel.value;
+      sel.replaceChildren();
+      horasDelDia(estado.miBarberoId, $('bloq-fecha').value).forEach(h => {
+        const op = document.createElement('option');
+        op.value = h;
+        op.textContent = formatoHora(h);
+        sel.appendChild(op);
+      });
+      if ([...sel.options].some(o => o.value === actual)) sel.value = actual;
+    }
+
+    function abrirBloqueo() {
+      const hoy = fechaLocal();
+      const f = $('filtro-fecha-barbero').value;
+      $('bloq-fecha').value = f && f >= hoy ? f : hoy;
+      $('bloq-fecha').min = hoy;
+      actualizarHorasBloqueo();
+      $('dlg-bloqueo').showModal();
+    }
+
+    async function enviarBloqueo(e) {
+      e.preventDefault();
+      const fecha = $('bloq-fecha').value;
+      const hora = $('bloq-hora').value;
+      if (!fecha) return avisar('Selecciona una fecha.', 'error');
+      if (!hora) return avisar('Ese día no trabajas; elige otra fecha.', 'error');
+
+      try {
+        await Store.bloquear(estado.miBarberoId, fecha, hora);
+        $('dlg-bloqueo').close();
+        avisar(`Hora bloqueada: ${formatoFecha(fecha)}, ${formatoHora(hora)}.`);
+      } catch (err) {
+        if (err && err.message === 'OCUPADO') {
+          avisar('Esa hora ya está ocupada o bloqueada.', 'error');
+        } else {
+          console.error(err);
+          avisar('No se pudo bloquear la hora.', 'error');
+        }
+      }
+    }
+
+    /* ---------- Bloquear días de descanso ---------- */
+    function abrirBloqueoDia() {
+      const hoy = fechaLocal();
+      const f = $('filtro-fecha-barbero').value;
+      $('dia-desde').value = f && f >= hoy ? f : hoy;
+      $('dia-hasta').value = '';
+      $('dia-desde').min = hoy;
+      $('dia-hasta').min = $('dia-desde').value;
+      $('dlg-dia').showModal();
+    }
+
+    async function enviarBloqueoDia(e) {
+      e.preventDefault();
+      const desde = $('dia-desde').value;
+      const hasta = $('dia-hasta').value || desde;
+
+      if (!desde) return avisar('Selecciona la fecha del descanso.', 'error');
+      if (desde < fechaLocal()) return avisar('No puedes bloquear fechas pasadas.', 'error');
+      if (hasta < desde) return avisar('La fecha final no puede ser anterior a la inicial.', 'error');
+
+      const fechas = rangoFechas(desde, hasta);
+      if (fechas.length > MAX_DIAS_BLOQUEO) return avisar(`Puedes bloquear máximo ${MAX_DIAS_BLOQUEO} días por vez.`, 'error');
+
+      const conflictos = estado.citas.filter(c => c.estado === 'pendiente' && fechas.includes(c.fecha)).length;
+      if (conflictos > 0) {
+        const ok = confirm(
+          `Tienes ${conflictos} cita(s) pendiente(s) en esas fechas. ` +
+          'Seguirán en tu lista para que las canceles o avises por WhatsApp. ¿Bloquear de todos modos?'
+        );
+        if (!ok) return;
+      }
+
+      try {
+        await Store.bloquearDias(estado.miBarberoId, fechas);
+        $('dlg-dia').close();
+        avisar(`Descanso bloqueado: ${fechas.length} día(s).`);
+      } catch (err) {
+        console.error(err);
+        avisar('No se pudo bloquear el día. Inténtalo de nuevo.', 'error');
+      }
+    }
+
+    /* =====================================================================
+       INSTALAR LA APP (Android: ventana de instalación; iPhone: instrucciones)
+       ===================================================================== */
+    let promptInstalacion = null;
+    let instaladaDetectada = false;
+    const CLAVE_INSTALADA = 'yeiko_app_instalada_v1';
+    const ua = navigator.userAgent;
+    const esIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const esAndroid = /android/i.test(ua);
+    const enNavegadorDeApp = /FBAN|FBAV|Instagram|Line\/|; wv\)/i.test(ua);
+    const enModoApp = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+    function marcaInstalada(valor) {
+      try {
+        if (valor === undefined) return localStorage.getItem(CLAVE_INSTALADA) === '1';
+        if (valor) localStorage.setItem(CLAVE_INSTALADA, '1'); else localStorage.removeItem(CLAVE_INSTALADA);
+      } catch (e) { /* sin almacenamiento: se muestra el botón */ }
+      return false;
+    }
+
+    function actualizarBotonInstalar() {
+      const puede = !!promptInstalacion || esIOS || esAndroid;
+      $('btn-instalar').hidden = enModoApp() || instaladaDetectada || marcaInstalada() || !puede;
+    }
+
+    window.addEventListener('beforeinstallprompt', ev => {
+      ev.preventDefault();
+      promptInstalacion = ev;
+      marcaInstalada(false);
+      actualizarBotonInstalar();
+    });
+
+    window.addEventListener('appinstalled', () => {
+      promptInstalacion = null;
+      marcaInstalada(true);
+      actualizarBotonInstalar();
+      avisar('App instalada. Búscala con el logo de Barbería Yeiko.');
+    });
+
+    function revisarSiYaEstaInstalada() {
+      if (!('getInstalledRelatedApps' in navigator)) return;
+      navigator.getInstalledRelatedApps()
+        .then(apps => { if (apps && apps.length) { instaladaDetectada = true; actualizarBotonInstalar(); } })
+        .catch(() => {});
+    }
+
+    async function instalarApp() {
+      if (promptInstalacion) {
+        const evento = promptInstalacion;
+        promptInstalacion = null;
+        evento.prompt();
+        const { outcome } = await evento.userChoice;
+        if (outcome === 'accepted') avisar('Instalando… en unos segundos aparece el ícono de Barbería Yeiko.');
+        actualizarBotonInstalar();
+      } else if (esIOS) {
+        $('dlg-ios').showModal();
+      } else {
+        $('paso-abrir-chrome').hidden = !enNavegadorDeApp && /chrome/i.test(ua) && !/SamsungBrowser/i.test(ua);
+        $('dlg-android').showModal();
+      }
+    }
+
+    function registrarServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => console.error('Service worker:', err));
+      }
+    }
+
+    /* =====================================================================
+       INICIO
+       ===================================================================== */
+    function conectarEventos() {
+      document.querySelectorAll('.btn-volver').forEach(b => b.addEventListener('click', () => mostrarVista('cliente')));
+      $('marca-inicio').addEventListener('click', ev => { ev.preventDefault(); mostrarVista('cliente'); });
+      $('btn-ingresar').addEventListener('click', () => abrirAcceso('login'));
+      $('btn-tab-cliente').addEventListener('click', () => mostrarVista('cliente'));
+      $('btn-tab-barbero').addEventListener('click', () => mostrarVista('barbero'));
+      $('btn-salir').addEventListener('click', async () => {
+        try { await Store.logout(); } catch (err) { console.error(err); avisar('No se pudo cerrar sesión.', 'error'); }
+      });
+
+      $('btn-reserva-toggle').addEventListener('click', alternarPanelReserva);
+      $('btn-clientes-toggle').addEventListener('click', alternarClientes);
+
+      document.querySelectorAll('.auth-tab').forEach(b => b.addEventListener('click', () => abrirAcceso(b.dataset.auth)));
+      $('btn-gate-login').addEventListener('click', () => abrirAcceso('login'));
+      $('btn-gate-registro').addEventListener('click', () => abrirAcceso('registro'));
+      $('form-login').addEventListener('submit', enviarLogin);
+      $('form-registro').addEventListener('submit', enviarRegistro);
+      $('btn-olvide').addEventListener('click', olvideClave);
+      $('form-clave').addEventListener('submit', guardarNuevaClave);
+      $('btn-clave-cancelar').addEventListener('click', () => $('dlg-clave').close());
+
+      $('form-reserva').addEventListener('submit', enviarReserva);
+      $('dias-prev').addEventListener('click', () => $('dia-strip').scrollBy({ left: -220, behavior: 'smooth' }));
+      $('dias-next').addEventListener('click', () => $('dia-strip').scrollBy({ left: 220, behavior: 'smooth' }));
+
+      $('gallery-grid').addEventListener('click', ev => {
+        const item = ev.target.closest('.gallery-item');
+        if (item) ampliarFoto(item);
+      });
+      $('gallery-grid').addEventListener('keydown', ev => {
+        if (ev.key !== 'Enter' && ev.key !== ' ') return;
+        const item = ev.target.closest('.gallery-item');
+        if (item) { ev.preventDefault(); ampliarFoto(item); }
+      });
+      $('modal-lightbox').addEventListener('click', cerrarFoto);
+      document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarFoto(); });
+      $('galeria-prev').addEventListener('click', () => $('gallery-grid').scrollBy({ left: -$('gallery-grid').clientWidth, behavior: 'smooth' }));
+      $('galeria-next').addEventListener('click', () => $('gallery-grid').scrollBy({ left: $('gallery-grid').clientWidth, behavior: 'smooth' }));
+
+      document.querySelectorAll('#view-barbero .subtab-btn:not(.resumen-tab)').forEach(b => {
+        b.addEventListener('click', () => {
+          estado.modo = b.dataset.modo;
+          document.querySelectorAll('#view-barbero .subtab-btn:not(.resumen-tab)').forEach(x => x.classList.toggle('active', x === b));
+          renderPanel();
+        });
+      });
+      document.querySelectorAll('.resumen-tab').forEach(b => {
+        b.addEventListener('click', () => {
+          estado.resumenPeriodo = b.dataset.periodo;
+          document.querySelectorAll('.resumen-tab').forEach(x => x.classList.toggle('active', x === b));
+          renderPanel();
+        });
+      });
+      $('filtro-fecha-historico').addEventListener('change', renderPanel);
+      $('btn-historico-todo').addEventListener('click', () => {
+        $('filtro-fecha-historico').value = '';
+        renderPanel();
+      });
+      $('bdias-prev').addEventListener('click', () => $('bdia-strip').scrollBy({ left: -220, behavior: 'smooth' }));
+      $('bdias-next').addEventListener('click', () => $('bdia-strip').scrollBy({ left: 220, behavior: 'smooth' }));
+
+      $('btn-bloquear').addEventListener('click', abrirBloqueo);
+      $('btn-bloq-cancelar').addEventListener('click', () => $('dlg-bloqueo').close());
+      $('bloq-fecha').addEventListener('change', actualizarHorasBloqueo);
+      $('form-bloqueo').addEventListener('submit', enviarBloqueo);
+
+      $('btn-bloquear-dia').addEventListener('click', abrirBloqueoDia);
+      $('btn-dia-cancelar').addEventListener('click', () => $('dlg-dia').close());
+      $('dia-desde').addEventListener('change', () => { $('dia-hasta').min = $('dia-desde').value; });
+      $('form-dia').addEventListener('submit', enviarBloqueoDia);
+      $('btn-respaldo').addEventListener('click', descargarRespaldo);
+
+      $('btn-instalar').addEventListener('click', instalarApp);
+      $('btn-ios-cerrar').addEventListener('click', () => $('dlg-ios').close());
+      $('btn-android-cerrar').addEventListener('click', () => $('dlg-android').close());
+      $('btn-android-listo').addEventListener('click', () => {
+        marcaInstalada(true);
+        $('dlg-android').close();
+        actualizarBotonInstalar();
+      });
+      $('btn-ios-listo').addEventListener('click', () => {
+        marcaInstalada(true);
+        $('dlg-ios').close();
+        actualizarBotonInstalar();
+      });
+
+      // Al volver a la página después de un rato, las horas se muestran solo cuando
+      // el servidor confirma la disponibilidad.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible' || !estado.listo) return;
+        if (subOcupados) {
+          estado.ocupadosAlDia = false;
+          renderHorarios();
+          subOcupados.recargar();
+        }
+        renderMisCitasAviso();
+        if (estado.vista === 'barbero') renderPanel();
+      });
+    }
+
+    function errorDeConexion(texto) {
+      const b = $('banner-error');
+      b.textContent = texto;
+      b.hidden = false;
+      $('btn-gate-login').disabled = true;
+      $('btn-gate-registro').disabled = true;
+      $('dia-strip').replaceChildren(el('p', 'hint', 'No se pudieron cargar los horarios.'));
+      $('lista-horario').replaceChildren(el('p', 'hint', 'No se pudo cargar el horario.'));
+    }
+
+    async function iniciar() {
+      poblarServicios();
+      renderInformacionFija();
+      renderGaleria();
+
+      $('filtro-fecha-barbero').value = fechaLocal();
+
+      conectarEventos();
+      registrarServiceWorker();
+      actualizarBotonInstalar();
+      revisarSiYaEstaInstalada();
+      mostrarVista('cliente');
+      actualizarReserva();
+      actualizarPanelReserva();
+      renderDiaStrip();
+      renderHorarios();
+
+      if (SUPABASE_URL.includes('TU-PROYECTO') || SUPABASE_ANON_KEY.startsWith('PEGA_')) {
+        errorDeConexion('Falta configurar Supabase: pega la URL y la clave anon en index.html (sección CONFIGURACIÓN).');
+        return;
+      }
+
+      try {
+        await Store.init();
+        BARBEROS = await Store.cargarBarberos();
+      } catch (err) {
+        console.error(err);
+        errorDeConexion('No se pudo conectar con el servidor. Revisa tu conexión y recarga la página.');
+        return;
+      }
+      estado.listo = true;
+
+      poblarBarberos();
+      preseleccionarBarbero();
+      renderInformacionBarberos();
+      renderDiaStrip();
+      renderHorarios();
+      mostrarVista(estado.vista);
+      asegurarDisponibilidad();
+
+      Store.vivirDiasBloqueados(lista => {
+        estado.diasBloqueados = lista;
+        renderDiaStrip();
+        renderHorarios();
+        renderPanel();
+      });
+      Store.vivirDiasAbiertos(lista => {
+        estado.diasAbiertos = lista;
+        renderDiaStrip();
+        renderHorarios();
+        renderPanel();
+      });
+      Store.onSesion(alCambiarSesion, abrirNuevaClave);
+    }
+
+    iniciar();
+  </script>
+</body>
+</html>
