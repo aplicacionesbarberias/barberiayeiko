@@ -50,8 +50,26 @@
       --peligro: #e05a52;
       --info: #6aa6dc;
       --degradado: linear-gradient(135deg, #f6dc8a 0%, #d4af37 45%, #a8801f 100%);
+      --brillo-rgb: 212, 175, 55;
       --serif: 'Cinzel', Georgia, 'Times New Roman', serif;
       --sans: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    /* Temas que rotan cada semana (el logo cambia con ellos). Dorado es el de :root. */
+    :root[data-tema="azul"] {
+      --linea: #1f2c45; --oro: #4f95ff; --oro-claro: #a9cbff; --oro-oscuro: #2a5fb8;
+      --degradado: linear-gradient(135deg, #b9d6ff 0%, #4f95ff 45%, #2a5fb8 100%);
+      --brillo-rgb: 79, 149, 255;
+    }
+    :root[data-tema="verde"] {
+      --linea: #1d3a27; --oro: #3fd96c; --oro-claro: #a9f3bf; --oro-oscuro: #1f9a45;
+      --degradado: linear-gradient(135deg, #c0f8d0 0%, #3fd96c 45%, #1f9a45 100%);
+      --brillo-rgb: 63, 217, 108;
+    }
+    :root[data-tema="plata"] {
+      --linea: #34373d; --oro: #cfd4dc; --oro-claro: #f3f5f8; --oro-oscuro: #8b929d;
+      --degradado: linear-gradient(135deg, #ffffff 0%, #cfd4dc 45%, #8b929d 100%);
+      --brillo-rgb: 207, 212, 220;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,7 +77,7 @@
 
     body {
       background: var(--negro);
-      background-image: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.10), transparent 60%);
+      background-image: radial-gradient(ellipse at top, rgba(var(--brillo-rgb), 0.10), transparent 60%);
       background-repeat: no-repeat;
       color: var(--blanco);
       font-family: var(--sans);
@@ -125,7 +143,7 @@
     .hero-logo {
       width: min(320px, 78vw); height: auto; display: block; margin: 0 auto;
       border-radius: 50%;
-      box-shadow: 0 0 60px rgba(212, 175, 55, 0.28), 0 0 0 1px rgba(212, 175, 55, 0.25);
+      box-shadow: 0 0 60px rgba(var(--brillo-rgb), 0.28), 0 0 0 1px rgba(var(--brillo-rgb), 0.25);
     }
     .btn-instalar {
       display: inline-flex; align-items: center; gap: 10px; margin-top: 1.4rem;
@@ -149,7 +167,7 @@
     .mis-citas {
       text-align: left;
       border: 1px solid var(--oro);
-      background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(212, 175, 55, 0.02));
+      background: linear-gradient(180deg, rgba(var(--brillo-rgb), 0.10), rgba(var(--brillo-rgb), 0.02));
       border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.2rem;
       display: flex; flex-direction: column; gap: 0.5rem;
     }
@@ -214,7 +232,7 @@
       width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px;
       background: var(--degradado); color: var(--negro); border: 1px solid var(--oro);
       border-radius: 999px; padding: 0.95rem 1.4rem; font-size: 1.05rem; font-weight: 700; cursor: pointer;
-      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.18);
+      box-shadow: 0 6px 24px rgba(var(--brillo-rgb), 0.18);
     }
     .toggle span { display: flex; align-items: center; gap: 10px; }
     .toggle-icon { transition: transform 0.2s; }
@@ -349,7 +367,7 @@
     /* ---------- Tarjeta de cita confirmada ---------- */
     .confirmacion {
       border: 1px solid var(--oro); border-radius: 14px;
-      background: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.16), transparent 70%);
+      background: radial-gradient(ellipse at top, rgba(var(--brillo-rgb), 0.16), transparent 70%);
       padding: 1.8rem 1.2rem;
       display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-align: center;
       animation: aparecer 0.35s ease-out;
@@ -517,7 +535,7 @@
   <!-- ENCABEZADO -->
   <header>
     <a class="marca" href="#" id="marca-inicio" aria-label="Barbería Yeiko, inicio">
-      <img src="img/logo-96.png" alt="">
+      <img src="img/logo-96.png" alt="" id="logo-mini">
       <span>BARBERÍA YEIKO</span>
     </a>
     <nav class="nav-tabs" aria-label="Navegación principal">
@@ -588,7 +606,7 @@
     <section id="view-cliente" class="view-section active">
 
       <div class="hero">
-        <img class="hero-logo" src="img/logo.png" alt="Barbería Yeiko" width="480" height="480">
+        <img class="hero-logo" id="logo-grande" src="img/logo.png" alt="Barbería Yeiko" width="480" height="480">
         <button type="button" class="btn-instalar" id="btn-instalar" hidden>
           <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Descargar la app en tu celular
         </button>
@@ -1018,6 +1036,43 @@
 
     // Se llena desde Supabase (tabla barberos).
     let BARBEROS = {};
+
+    /* =====================================================================
+       COLOR DE LA SEMANA: el logo y los colores de la app rotan solos cada lunes.
+       Orden: dorado → azul → verde → plata → dorado…
+       La semana del lunes 12 de octubre de 2026 es dorada (de ahí arranca la cuenta).
+       Para ver uno a la fuerza: agrega ?tema=azul (o verde, plata, dorado) al final del link.
+       ===================================================================== */
+    const TEMAS = [
+      { id: 'dorado', logo: 'img/logo.png',       mini: 'img/logo-96.png' },
+      { id: 'azul',   logo: 'img/logo-azul.png',  mini: 'img/logo-azul-96.png' },
+      { id: 'verde',  logo: 'img/logo-verde.png', mini: 'img/logo-verde-96.png' },
+      { id: 'plata',  logo: 'img/logo-plata.png', mini: 'img/logo-plata-96.png' }
+    ];
+    const LUNES_INICIO_TEMAS = '2026-10-12';
+
+    function temaDeLaSemana() {
+      const forzado = new URLSearchParams(location.search).get('tema');
+      const elegido = TEMAS.find(t => t.id === forzado);
+      if (elegido) return elegido;
+      const hoy = new Date();
+      const dow = hoy.getDay();
+      const lunes = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - (dow === 0 ? 6 : dow - 1), 12);
+      const inicio = new Date(LUNES_INICIO_TEMAS + 'T12:00:00');
+      const semanas = Math.round((lunes - inicio) / (7 * 86400000));
+      return TEMAS[((semanas % TEMAS.length) + TEMAS.length) % TEMAS.length];
+    }
+
+    function aplicarTema() {
+      const t = temaDeLaSemana();
+      if (t.id === 'dorado') delete document.documentElement.dataset.tema;
+      else document.documentElement.dataset.tema = t.id;
+      const grande = document.getElementById('logo-grande');
+      const mini = document.getElementById('logo-mini');
+      if (grande && !grande.src.endsWith(t.logo)) grande.src = t.logo;
+      if (mini && !mini.src.endsWith(t.mini)) mini.src = t.mini;
+    }
+    aplicarTema();
 
     /* =====================================================================
        UTILIDADES
