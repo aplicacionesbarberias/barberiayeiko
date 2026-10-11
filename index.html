@@ -291,6 +291,57 @@
     }
     .slot-btn:hover:not(:disabled) { border-color: var(--oro); }
     .slot-btn.selected { background: var(--degradado); color: var(--negro); font-weight: 700; border-color: var(--oro); }
+    /* Merienda */
+    .merienda-titulo { color: var(--oro); font-family: var(--serif); font-size: 1.05rem; }
+    .meriendas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .merienda-opcion { position: relative; margin: 0; }
+    .merienda-opcion input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .merienda-opcion > span {
+      display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+      padding: 12px 4px; border-radius: 12px; cursor: pointer; font-size: 0.82rem; line-height: 1.2;
+      background: var(--concreto); border: 1px solid var(--linea); color: var(--blanco);
+    }
+    .merienda-emoji { font-size: 1.6rem; font-weight: 400; }
+    .merienda-opcion input:checked + span { background: var(--degradado); color: var(--negro); border-color: var(--oro); }
+    .merienda-opcion input:focus-visible + span { outline: 2px solid var(--oro); outline-offset: 2px; }
+    @media (max-width: 380px) { .meriendas { grid-template-columns: repeat(2, 1fr); } }
+
+    /* Pago */
+    .pago-box { width: 100%; border: 1px dashed var(--oro); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; text-align: center; }
+    .pago-titulo { font-family: var(--serif); color: var(--oro); font-size: 1.15rem; }
+    .pago-valor { font-size: 1.5rem; font-weight: 700; }
+    .pago-llave { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .pago-llave code { background: var(--concreto); border: 1px solid var(--linea); padding: 6px 10px; border-radius: 8px; font-size: 1.05rem; color: var(--blanco); }
+    .pago-qr { width: 170px; border-radius: 10px; border: 1px solid var(--linea); cursor: zoom-in; background: #fff; }
+    .pago-reloj { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--alerta); }
+    .pago-reloj.vencido { font-size: 1rem; color: var(--peligro); }
+    .pago-aviso { color: var(--alerta); font-size: 0.85rem; }
+    .pago-box .btn { width: 100%; }
+    .btn-wa { background: #25D366; border-color: #25D366; color: #06120a; }
+    .mis-citas-pago { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; font-size: 0.82rem; color: var(--alerta); }
+    .mini-btn { background: var(--oro); color: var(--negro); border: none; border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+
+    /* Panel: pago y merienda */
+    .badge-pago-pendiente { background: rgba(230, 169, 60, 0.18); color: var(--alerta); }
+    .badge-pago-vencido { background: rgba(224, 90, 82, 0.22); color: var(--peligro); }
+    .badge-pagado { background: rgba(95, 191, 133, 0.18); color: var(--ok); }
+    .badge-merienda { border: 1px solid var(--linea); color: var(--blanco); }
+    .cancelar-opciones { display: flex; flex-direction: column; gap: 8px; margin-top: 0.6rem; }
+
+    /* Bloqueo de horas */
+    .bq-slot.libre { }
+    .bq-slot.bloq { background: #2a1416; border-color: var(--peligro); color: #f0b4b0; }
+    .bq-slot.cita { background: #151412; color: #6f6a60; cursor: not-allowed; }
+    .bq-slot.sel { outline: 2px solid var(--oro); outline-offset: 1px; background: var(--degradado); color: var(--negro); }
+    .bq-leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.78rem; color: var(--gris); margin-top: 0.6rem; }
+    .bq-cuadro { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; border: 1px solid var(--linea); }
+    .bq-cuadro.libre { background: var(--concreto); }
+    .bq-cuadro.bloq { background: #2a1416; border-color: var(--peligro); }
+    .bq-cuadro.cita { background: #151412; }
+    .bq-resultado { font-size: 0.88rem; margin-top: 0.6rem; min-height: 1.2em; }
+    .bq-resultado.ok { color: var(--ok); }
+    .bq-resultado.error { color: var(--peligro); }
+
     .slots-grid.slots-anchos { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
     .badge-domicilio { border: 1px solid var(--oro); color: var(--oro); display: inline-flex; gap: 4px; align-items: center; }
     .slot-btn.blocked { background: #151412; color: #5f5a50; text-decoration: line-through; cursor: not-allowed; }
@@ -600,6 +651,15 @@
               </div>
 
               <div id="datos-cliente-wrap" hidden>
+                <fieldset class="form-group merienda-wrap" style="border: none;">
+                  <legend class="etiqueta merienda-titulo">Elige tu merienda para tu turno</legend>
+                  <div class="meriendas" id="meriendas">
+                    <label class="merienda-opcion"><input type="radio" name="merienda" value="agua"><span><b class="merienda-emoji" aria-hidden="true">💧</b>Agua</span></label>
+                    <label class="merienda-opcion"><input type="radio" name="merienda" value="tinto"><span><b class="merienda-emoji" aria-hidden="true">☕</b>Tinto</span></label>
+                    <label class="merienda-opcion"><input type="radio" name="merienda" value="cafe_pan"><span><b class="merienda-emoji" aria-hidden="true">🥐</b>Café con pan</span></label>
+                    <label class="merienda-opcion"><input type="radio" name="merienda" value="" checked><span><b class="merienda-emoji" aria-hidden="true">🙅</b>No, gracias</span></label>
+                  </div>
+                </fieldset>
                 <div class="form-group">
                   <label for="cliente-nombre"><i class="fa-solid fa-user" aria-hidden="true"></i> Nombre completo</label>
                   <input type="text" id="cliente-nombre" maxlength="80" autocomplete="name" required placeholder="Ej. Carlos Gómez">
@@ -730,9 +790,26 @@
       <!-- BLOQUEOS -->
       <div class="panel">
         <div class="panel-seccion"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloqueos</div>
-        <div class="bloqueos-botones">
-          <button type="button" class="btn btn-danger" id="btn-bloquear"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear hora</button>
-          <button type="button" class="btn btn-secondary" id="btn-bloquear-dia"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i> Bloquear día(s)</button>
+        <p class="hint" style="margin-bottom: 0.6rem;">Toca un día y luego las horas que quieres bloquear o desbloquear. Puedes elegir varias.</p>
+        <div class="dia-strip-wrap">
+          <button type="button" class="dia-flecha dia-flecha-izq" id="bqdias-prev" aria-label="Ver días anteriores">‹</button>
+          <div class="dia-strip" id="bq-strip" role="group" aria-label="Día para bloquear horas"></div>
+          <button type="button" class="dia-flecha dia-flecha-der" id="bqdias-next" aria-label="Ver más días">›</button>
+        </div>
+        <p class="hint" id="bq-dia-texto" style="margin: 0.8rem 0 0.4rem;"></p>
+        <div class="slots-grid" id="bq-horas"></div>
+        <div class="bq-leyenda" id="bq-leyenda" hidden>
+          <span><i class="bq-cuadro libre"></i> Libre</span>
+          <span><i class="bq-cuadro bloq"></i> Bloqueada</span>
+          <span><i class="bq-cuadro cita"></i> Con cita</span>
+        </div>
+        <div class="bloqueos-botones" style="margin-top: 0.9rem;">
+          <button type="button" class="btn btn-danger" id="btn-bq-guardar" disabled><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear seleccionadas</button>
+          <button type="button" class="btn btn-secondary" id="btn-bq-liberar" disabled><i class="fa-solid fa-lock-open" aria-hidden="true"></i> Desbloquear seleccionadas</button>
+        </div>
+        <p class="bq-resultado" id="bq-resultado" role="status"></p>
+        <div class="bloqueos-botones" style="margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btn-bloquear-dia"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i> Bloquear día(s) completos</button>
         </div>
         <p class="hint" style="margin: 1rem 0 0.6rem;">Días de descanso próximos</p>
         <div class="chips" id="lista-dias-bloqueados"></div>
@@ -761,23 +838,25 @@
     </section>
   </main>
 
-  <!-- DIÁLOGO: BLOQUEAR HORA -->
-  <dialog id="dlg-bloqueo" aria-labelledby="dlg-bloqueo-titulo">
-    <form id="form-bloqueo" novalidate>
-      <h3 id="dlg-bloqueo-titulo">Bloquear una hora</h3>
-      <div class="form-group">
-        <label for="bloq-fecha">Fecha</label>
-        <input type="date" id="bloq-fecha" required>
-      </div>
-      <div class="form-group">
-        <label for="bloq-hora">Hora</label>
-        <select id="bloq-hora"></select>
-      </div>
-      <div class="dialog-actions">
-        <button type="button" class="btn btn-secondary" id="btn-bloq-cancelar">Cancelar</button>
-        <button type="submit" class="btn btn-danger">Bloquear</button>
-      </div>
-    </form>
+  <!-- DIÁLOGO: CANCELAR CITA (barbero) -->
+  <dialog id="dlg-cancelar" aria-labelledby="dlg-cancelar-titulo">
+    <h3 id="dlg-cancelar-titulo">Cancelar cita</h3>
+    <p class="hint" id="dlg-cancelar-detalle" style="color: var(--blanco);"></p>
+    <p class="hint">Al cliente le llega un aviso por correo y Telegram. La hora queda libre.</p>
+    <div class="cancelar-opciones">
+      <button type="button" class="btn btn-danger" id="btn-cancelar-pago"><i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Cancelar por falta de pago</button>
+      <button type="button" class="btn btn-secondary" id="btn-cancelar-otro">Cancelar por otro motivo</button>
+      <button type="button" class="link-btn" id="btn-cancelar-volver" style="margin: 0.4rem 0 0;">No cancelar</button>
+    </div>
+  </dialog>
+
+  <!-- DIÁLOGO: PAGAR CITA (cliente) -->
+  <dialog id="dlg-pago" aria-labelledby="dlg-pago-titulo">
+    <h3 id="dlg-pago-titulo">Paga tu cita</h3>
+    <div id="dlg-pago-contenido"></div>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="btn-pago-cerrar">Cerrar</button>
+    </div>
   </dialog>
 
   <!-- DIÁLOGO: BLOQUEAR DÍAS -->
@@ -894,7 +973,7 @@
     const DURACION_TURNO_MIN = 60;
 
     // Galería: sube las fotos a img/trabajos/ como trabajo-01.jpg, trabajo-02.jpg… (sin saltar números).
-    const TOTAL_CUPOS_GALERIA = 20;
+    const TOTAL_CUPOS_GALERIA = 60;
 
     const CODIGO_PAIS = "57";
     const MAX_DIAS_BLOQUEO = 60;
@@ -921,6 +1000,21 @@
     const PRODUCTOS = [];
 
     const ESTADOS = ["pendiente", "completada", "cancelada", "bloqueada"];
+
+    // PAGO para separar la cita (Bre-B). El cliente paga el valor completo del servicio.
+    // La cita NO se cancela sola: el barbero decide desde su panel.
+    const PAGO = {
+      llave: "@yeider966",
+      qr: "img/pago-qr.jpg",
+      minutos: 15,              // tiempo que se le muestra al cliente para enviar el comprobante
+      whatsapp: "573226946675"  // a dónde manda el pantallazo
+    };
+
+    const MERIENDAS = {
+      agua:     { nombre: "Agua",         emoji: "💧" },
+      tinto:    { nombre: "Tinto",        emoji: "☕" },
+      cafe_pan: { nombre: "Café con pan", emoji: "🥐" }
+    };
 
     // Se llena desde Supabase (tabla barberos).
     let BARBEROS = {};
@@ -1123,6 +1217,10 @@
     let toastTimer;
     function avisar(mensaje, tipo = 'info') {
       const t = $('toast');
+      // Si hay una ventana abierta, el aviso va dentro de ella para que se vea encima.
+      const abierta = document.querySelector('dialog[open]');
+      const destino = abierta || document.body;
+      if (t.parentElement !== destino) destino.appendChild(t);
       t.textContent = mensaje;
       t.className = `toast show ${tipo}`;
       clearTimeout(toastTimer);
@@ -1163,7 +1261,8 @@
         id: r.id, uid: r.uid, barberoId: r.barbero_id, fecha: r.fecha, hora: r.hora,
         servicio: r.servicio, servicioNombre: r.servicio_nombre,
         clienteNombre: r.cliente_nombre, clienteTelefono: r.cliente_telefono, clienteEmail: r.cliente_email,
-        estado: r.estado, creadaEn: r.creada_en, turnos: r.turnos || 1
+        estado: r.estado, creadaEn: r.creada_en, turnos: r.turnos || 1,
+        merienda: r.merienda || '', pagoEstado: r.pago_estado || 'no_aplica', motivoCancelacion: r.motivo_cancelacion || ''
       });
 
       // Carga los datos y los mantiene al día: tiempo real + al volver a la pestaña + cada cierto tiempo.
@@ -1308,7 +1407,8 @@
           const { data, error } = await sb.rpc('reservar_cita', {
             p_barbero: c.barberoId, p_fecha: c.fecha, p_hora: c.hora,
             p_servicio: c.servicio, p_servicio_nombre: c.servicioNombre,
-            p_nombre: c.clienteNombre, p_telefono: c.clienteTelefono
+            p_nombre: c.clienteNombre, p_telefono: c.clienteTelefono,
+            p_merienda: c.merienda || null
           });
           if (error) {
             const m = String(error.message || '');
@@ -1322,16 +1422,23 @@
 
         async bloquear(barberoId, fecha, hora) {
           const { error } = await sb.from('citas').insert({
-            barbero_id: barberoId, fecha, hora, estado: 'bloqueada', cliente_nombre: 'Horario bloqueado'
+            barbero_id: barberoId, fecha, hora, estado: 'bloqueada', cliente_nombre: 'Horario bloqueado', pago_estado: 'no_aplica'
           });
           if (error) {
             if (error.code === '23505') throw new Error('OCUPADO');
-            throw error;
+            const e = new Error(error.message || 'Error');
+            e.code = error.code;
+            throw e;
           }
         },
 
-        async cambiarEstado(cita, nuevo) {
-          const { error } = await sb.from('citas').update({ estado: nuevo }).eq('id', cita.id);
+        async cambiarEstado(cita, nuevo, extra = {}) {
+          const { error } = await sb.from('citas').update({ estado: nuevo, ...extra }).eq('id', cita.id);
+          if (error) throw error;
+        },
+
+        async marcarPago(cita, pagoEstado) {
+          const { error } = await sb.from('citas').update({ pago_estado: pagoEstado }).eq('id', cita.id);
           if (error) throw error;
         },
 
@@ -1556,6 +1663,20 @@
         det.append(el('strong', null, `${textoHoraCita(c.hora, c.turnos)} · ${formatoFechaLarga(c.fecha)}`));
         const serv = nombreServicio(c);
         det.append(`${serv ? serv + ' con ' : 'Con '}${nombreBarbero(c.barberoId)}`);
+        if (c.merienda && MERIENDAS[c.merienda]) det.append(el('div', 'hint', `Merienda: ${MERIENDAS[c.merienda].emoji} ${MERIENDAS[c.merienda].nombre}`));
+        if (c.pagoEstado === 'pendiente') {
+          const pg = el('div', 'mis-citas-pago');
+          const btn = el('button', 'mini-btn', 'Pagar');
+          btn.type = 'button';
+          btn.addEventListener('click', () => abrirPago(c));
+          pg.append(icono('fa-solid fa-clock'), 'Pago pendiente', btn);
+          det.appendChild(pg);
+        } else if (c.pagoEstado === 'pagado') {
+          const pg = el('div', 'mis-citas-pago');
+          pg.style.color = 'var(--ok)';
+          pg.append(icono('fa-solid fa-circle-check'), 'Pago recibido');
+          det.appendChild(pg);
+        }
         item.append(chip, det);
         cont.appendChild(item);
       });
@@ -2018,6 +2139,99 @@
       renderHorarios();
     }
 
+    /* ---------- Pago para separar la cita (Bre-B) ---------- */
+    const precioCita = c => (SERVICIOS[c.servicio] ? SERVICIOS[c.servicio].precio : 0);
+    const venceCita = c => new Date(c.creadaEn || Date.now()).getTime() + PAGO.minutos * 60000;
+
+    function copiarTexto(texto) {
+      const ok = () => avisar('Llave copiada. Pégala en tu app del banco.');
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto).then(ok).catch(() => prompt('Copia la llave:', texto));
+      } else {
+        prompt('Copia la llave:', texto);
+      }
+    }
+
+    function mensajeComprobante(c) {
+      const serv = nombreServicio(c);
+      return `Hola Yeiko, te envío el comprobante de pago de mi cita: ${formatoFechaLarga(c.fecha)}, ` +
+        `${textoHoraCita(c.hora, c.turnos)}${serv ? ' (' + serv + ')' : ''}. A nombre de ${c.clienteNombre || (estado.usuario && estado.usuario.nombre) || ''}.`;
+    }
+
+    // Recuadro con el valor, la llave, el QR, el reloj de 15 minutos y el botón de WhatsApp.
+    function bloquePago(c) {
+      const box = el('div', 'pago-box');
+      box.appendChild(el('span', 'pago-titulo', 'Separa tu cita'));
+      const precio = precioCita(c);
+      if (precio) box.appendChild(el('span', 'pago-valor', formatoPrecio(precio)));
+      box.appendChild(el('span', 'hint', 'Paga con Bre-B desde la app de tu banco (Bancolombia, Nequi, Daviplata…) a esta llave:'));
+
+      const llave = el('div', 'pago-llave');
+      const btnCopiar = el('button', 'mini-btn', 'Copiar llave');
+      btnCopiar.type = 'button';
+      btnCopiar.addEventListener('click', () => copiarTexto(PAGO.llave));
+      llave.append(el('code', null, PAGO.llave), btnCopiar);
+      box.appendChild(llave);
+
+      const qr = document.createElement('img');
+      qr.className = 'pago-qr';
+      qr.src = PAGO.qr;
+      qr.alt = 'Código QR de Bre-B para pagar (toca para ampliar)';
+      qr.addEventListener('click', () => {
+        $('img-ampliada').src = PAGO.qr;
+        $('img-ampliada').alt = 'Código QR de pago';
+        $('modal-lightbox').style.display = 'flex';
+      });
+      const descargar = el('a', 'link-btn', 'Guardar QR para pagarlo desde la galería');
+      descargar.href = PAGO.qr;
+      descargar.download = 'qr-pago-barberia-yeiko.jpg';
+      descargar.style.marginBottom = '0';
+      box.append(qr, descargar);
+
+      const reloj = el('span', 'pago-reloj');
+      reloj.dataset.vence = String(venceCita(c));
+      box.appendChild(reloj);
+      box.appendChild(el('span', 'pago-aviso',
+        `Envía el comprobante en los próximos ${PAGO.minutos} minutos. Si no, tu cita se cancela.`));
+
+      const wa = el('a', 'btn btn-wa');
+      wa.href = `https://wa.me/${PAGO.whatsapp}?text=${encodeURIComponent(mensajeComprobante(c))}`;
+      wa.target = '_blank';
+      wa.rel = 'noopener noreferrer';
+      wa.append(icono('fa-brands fa-whatsapp'), ' Enviar comprobante por WhatsApp');
+      wa.style.textDecoration = 'none';
+      box.appendChild(wa);
+      actualizarRelojes();
+      return box;
+    }
+
+    // Cuenta regresiva de todos los relojes de pago visibles.
+    function actualizarRelojes() {
+      document.querySelectorAll('.pago-reloj[data-vence]').forEach(n => {
+        const resta = Number(n.dataset.vence) - Date.now();
+        if (resta <= 0) {
+          n.textContent = 'Tiempo cumplido: envía tu comprobante ya mismo';
+          n.classList.add('vencido');
+        } else {
+          const m = Math.floor(resta / 60000), sgs = Math.floor((resta % 60000) / 1000);
+          n.textContent = `${pad(m)}:${pad(sgs)}`;
+          n.classList.remove('vencido');
+        }
+      });
+    }
+    setInterval(actualizarRelojes, 1000);
+    // El panel del barbero refresca cada minuto los minutos sin pago.
+    setInterval(() => { if (estado.vista === 'barbero' && estado.esBarbero) renderPanel(); }, 60000);
+
+    function abrirPago(c) {
+      const cont = $('dlg-pago-contenido');
+      cont.replaceChildren(
+        el('p', 'hint', `${formatoFechaLarga(c.fecha)}, ${textoHoraCita(c.hora, c.turnos)} · ${nombreServicio(c)}`),
+        bloquePago(c)
+      );
+      $('dlg-pago').showModal();
+    }
+
     // TARJETA "CITA CONFIRMADA": el formulario de atrás queda limpio (sin día ni hora)
     // y solo se ve el anuncio. Al tocar "Listo" vuelve el formulario normal.
     function mostrarConfirmacion(cita) {
@@ -2025,12 +2239,16 @@
       box.replaceChildren();
 
       box.appendChild(icono('fa-solid fa-circle-check confirmacion-check'));
-      box.appendChild(el('strong', 'confirmacion-titulo', 'Cita confirmada'));
+      box.appendChild(el('strong', 'confirmacion-titulo', '¡Tu cita está separada!'));
       box.appendChild(el('span', 'confirmacion-detalle', `${formatoFechaLarga(cita.fecha)}, ${textoHoraCita(cita.hora, cita.turnos)}`));
       const serv = SERVICIOS[cita.servicio];
       box.appendChild(el('span', null, `${serv.nombre} con ${nombreBarbero(cita.barberoId)} · ${formatoPrecio(serv.precio)}`));
+      if (cita.merienda && MERIENDAS[cita.merienda]) {
+        box.appendChild(el('span', null, `Tu merienda: ${MERIENDAS[cita.merienda].emoji} ${MERIENDAS[cita.merienda].nombre}`));
+      }
+      box.appendChild(bloquePago(cita));
       box.appendChild(el('span', 'confirmacion-nota',
-        `Te llega la confirmación a tu correo (y a Telegram, si lo conectaste). ${RECORDATORIO_MINUTOS} minutos antes te enviamos un recordatorio.`));
+        `Te llega el detalle a tu correo (y a Telegram, si lo conectaste). ${RECORDATORIO_MINUTOS} minutos antes te enviamos un recordatorio.`));
 
       const btnListo = el('button', 'btn', 'Listo');
       btnListo.type = 'button';
@@ -2122,12 +2340,15 @@
       try {
         const cita = {
           clienteNombre: nombre, clienteTelefono: telefono, barberoId,
-          servicio, servicioNombre: SERVICIOS[servicio].nombre, fecha, hora, turnos: turnosDe(servicio)
+          servicio, servicioNombre: SERVICIOS[servicio].nombre, fecha, hora, turnos: turnosDe(servicio),
+          merienda: (document.querySelector('input[name="merienda"]:checked') || {}).value || ''
         };
         await Store.reservar(cita);
         estado.usuario.nombre = nombre;
         estado.usuario.telefono = telefono;
         // Se muestra ya mismo en "Tu cita programada" (el tiempo real lo confirma enseguida).
+        cita.pagoEstado = 'pendiente';
+        cita.creadaEn = new Date().toISOString();
         estado.misCitasLista = [...estado.misCitasLista, { ...cita, estado: 'pendiente' }];
         mostrarConfirmacion(cita);
       } catch (err) {
@@ -2366,6 +2587,8 @@
       renderAgendaStrip(todas);
       renderDiasBloqueados();
       renderDiasAbiertos();
+      renderBloqueoStrip();
+      renderBloqueoHoras();
       renderResumen(todas);
       renderClientes(todas);
 
@@ -2575,6 +2798,19 @@
         h3.append(b);
       }
       h3.append(el('span', `badge badge-${est}`, textoEstado));
+      if (est === 'pendiente' || est === 'completada') {
+        if (c.pagoEstado === 'pagado') {
+          h3.append(el('span', 'badge badge-pagado', 'pagada'));
+        } else if (c.pagoEstado === 'pendiente') {
+          const min = Math.max(0, Math.floor((Date.now() - new Date(c.creadaEn).getTime()) / 60000));
+          const vencido = min >= PAGO.minutos;
+          h3.append(el('span', `badge ${vencido ? 'badge-pago-vencido' : 'badge-pago-pendiente'}`,
+            vencido ? `sin pago · ${min} min` : `pago pendiente · ${min} min`));
+        }
+      }
+      if (c.merienda && MERIENDAS[c.merienda]) {
+        h3.append(el('span', 'badge badge-merienda', `${MERIENDAS[c.merienda].emoji} ${MERIENDAS[c.merienda].nombre}`));
+      }
 
       const p = el('p');
       p.append(icono('fa-solid fa-calendar'), ` ${formatoFecha(c.fecha)}`);
@@ -2586,11 +2822,20 @@
       const acciones = el('div', 'card-actions');
       if (est === 'pendiente') {
         acciones.append(
-          botonAccion('fa-solid fa-check', 'var(--ok)', 'Marcar como realizada', () => actualizarCita(c, 'completada')),
-          botonAccion('fa-solid fa-xmark', 'var(--peligro)', 'Cancelar cita', () => {
-            if (confirm(`¿Cancelar la cita de ${c.clienteNombre} de las ${textoHoraCita(c.hora, c.turnos)}? La hora queda libre para otros clientes.`)) actualizarCita(c, 'cancelada');
-          })
+          botonAccion('fa-solid fa-check', 'var(--ok)', 'Marcar como realizada', () => actualizarCita(c, 'completada'))
         );
+        if (c.pagoEstado === 'pendiente') {
+          acciones.append(botonAccion('fa-solid fa-dollar-sign', 'var(--oro)', 'Pago recibido', async () => {
+            try {
+              await Store.marcarPago(c, 'pagado');
+              avisar('Pago registrado. La cita queda separada.');
+            } catch (err) {
+              console.error(err);
+              avisar('No se pudo registrar el pago: ' + (err.message || ''), 'error');
+            }
+          }));
+        }
+        acciones.append(botonAccion('fa-solid fa-xmark', 'var(--peligro)', 'Cancelar cita', () => pedirCancelacion(c)));
       }
       if (est === 'completada') {
         acciones.append(botonAccion('fa-solid fa-rotate-left', 'var(--gris)', 'Volver a pendiente', () => actualizarCita(c, 'pendiente')));
@@ -2623,11 +2868,27 @@
       return b;
     }
 
-    async function actualizarCita(cita, nuevoEstado) {
+    // Ventana para cancelar: por falta de pago u otro motivo. Al cliente le llega el aviso.
+    function pedirCancelacion(c) {
+      const dlg = $('dlg-cancelar');
+      $('dlg-cancelar-detalle').textContent =
+        `${c.clienteNombre || 'Cliente'} · ${formatoFechaLarga(c.fecha)}, ${textoHoraCita(c.hora, c.turnos)}`;
+      $('btn-cancelar-pago').hidden = c.pagoEstado === 'pagado';
+      const cerrar = () => {
+        $('btn-cancelar-pago').onclick = $('btn-cancelar-otro').onclick = $('btn-cancelar-volver').onclick = null;
+        if (dlg.open) dlg.close();
+      };
+      $('btn-cancelar-pago').onclick = () => { cerrar(); actualizarCita(c, 'cancelada', { motivo_cancelacion: 'falta_de_pago' }); };
+      $('btn-cancelar-otro').onclick = () => { cerrar(); actualizarCita(c, 'cancelada', { motivo_cancelacion: 'barbero' }); };
+      $('btn-cancelar-volver').onclick = cerrar;
+      dlg.showModal();
+    }
+
+    async function actualizarCita(cita, nuevoEstado, extra = {}) {
       try {
-        await Store.cambiarEstado(cita, nuevoEstado);
+        await Store.cambiarEstado(cita, nuevoEstado, extra);
         if (nuevoEstado === 'completada') avisar('Cita marcada como realizada.');
-        if (nuevoEstado === 'cancelada') avisar(cita.estado === 'bloqueada' ? 'Hora liberada.' : 'Cita cancelada. La hora quedó libre.');
+        if (nuevoEstado === 'cancelada') avisar(cita.estado === 'bloqueada' ? 'Hora liberada.' : 'Cita cancelada. Le avisamos al cliente y la hora quedó libre.');
       } catch (err) {
         console.error(err);
         avisar(err && err.code === '23505' ? 'Esa hora ya la tomó otra cita.' : 'No se pudo actualizar la cita.', 'error');
@@ -2663,48 +2924,119 @@
       avisar('Respaldo descargado.');
     }
 
-    /* ---------- Bloquear una hora ---------- */
-    function actualizarHorasBloqueo() {
-      const sel = $('bloq-hora');
-      const actual = sel.value;
-      sel.replaceChildren();
-      horasDelDia(estado.miBarberoId, $('bloq-fecha').value).forEach(h => {
-        const op = document.createElement('option');
-        op.value = h;
-        op.textContent = formatoHora(h);
-        sel.appendChild(op);
-      });
-      if ([...sel.options].some(o => o.value === actual)) sel.value = actual;
+    /* ---------- Bloquear horas: días en fila, horas abajo, varias a la vez ---------- */
+    const bq = { fecha: '', sel: new Set() };
+
+    // Estado de cada hora del día para el barbero: libre, bloqueada (con su cita) o con cita de cliente.
+    function estadoHorasDia(fecha) {
+      const yo = estado.miBarberoId;
+      const mapa = {};
+      estado.citas
+        .filter(c => c.fecha === fecha && c.estado !== 'cancelada')
+        .forEach(c => horasCubiertas(c.hora, c.turnos || 1).forEach(h => {
+          mapa[h] = c.estado === 'bloqueada' ? { tipo: 'bloq', cita: c } : { tipo: 'cita', cita: c };
+        }));
+      const dia = new Date(fecha + 'T12:00:00').getDay();
+      const horas = (horarioDe(yo)[dia] || []).slice().sort();
+      return horas.map(h => ({ hora: h, ...(mapa[h] || { tipo: 'libre' }) }));
     }
 
-    function abrirBloqueo() {
+    function renderBloqueoStrip() {
+      const cont = $('bq-strip');
+      if (!cont) return;
+      const scrollPrevio = cont.scrollLeft;
+      cont.replaceChildren();
       const hoy = fechaLocal();
-      const f = $('filtro-fecha-barbero').value;
-      $('bloq-fecha').value = f && f >= hoy ? f : hoy;
-      $('bloq-fecha').min = hoy;
-      actualizarHorasBloqueo();
-      $('dlg-bloqueo').showModal();
+      if (!bq.fecha) bq.fecha = hoy;
+      for (let i = 0; i <= DIAS_PARA_RESERVAR; i++) {
+        const fecha = sumarDias(hoy, i);
+        const d = new Date(fecha + 'T12:00:00');
+        const lista = estadoHorasDia(fecha);
+        const nb = lista.filter(x => x.tipo === 'bloq').length;
+        const btn = el('button', 'dia-card' + (fecha === bq.fecha ? ' seleccionado' : '') + (lista.length ? '' : ' inactivo'));
+        btn.type = 'button';
+        btn.append(
+          el('span', 'dia-card-abrev', i === 0 ? 'Hoy' : DIAS_ABREV[d.getDay()]),
+          el('span', 'dia-card-num', String(d.getDate())),
+          el('span', 'dia-card-estado', !lista.length ? 'Cerrado' : nb ? `${nb} bloq.` : 'Libre')
+        );
+        btn.addEventListener('click', () => {
+          bq.fecha = fecha;
+          bq.sel.clear();
+          $('bq-resultado').textContent = '';
+          renderBloqueoStrip();
+          renderBloqueoHoras();
+        });
+        cont.appendChild(btn);
+      }
+      cont.scrollLeft = scrollPrevio;
     }
 
-    async function enviarBloqueo(e) {
-      e.preventDefault();
-      const fecha = $('bloq-fecha').value;
-      const hora = $('bloq-hora').value;
-      if (!fecha) return avisar('Selecciona una fecha.', 'error');
-      if (!hora) return avisar('Ese día no trabajas; elige otra fecha.', 'error');
+    function renderBloqueoHoras() {
+      const grid = $('bq-horas');
+      if (!grid) return;
+      grid.replaceChildren();
+      const lista = estadoHorasDia(bq.fecha);
+      $('bq-dia-texto').textContent = formatoFechaLarga(bq.fecha);
+      $('bq-leyenda').hidden = !lista.length;
+      if (!lista.length) grid.appendChild(mensajeHorarios('Ese día no trabajas según tu horario.'));
 
-      try {
-        await Store.bloquear(estado.miBarberoId, fecha, hora);
-        $('dlg-bloqueo').close();
-        avisar(`Hora bloqueada: ${formatoFecha(fecha)}, ${formatoHora(hora)}.`);
-      } catch (err) {
-        if (err && err.message === 'OCUPADO') {
-          avisar('Esa hora ya está ocupada o bloqueada.', 'error');
+      lista.forEach(x => {
+        const pasada = horaPasada(bq.fecha, x.hora);
+        const btn = el('button', `slot-btn bq-slot ${x.tipo}` + (bq.sel.has(x.hora) ? ' sel' : ''));
+        btn.type = 'button';
+        btn.textContent = formatoHora(x.hora) + (x.tipo === 'bloq' ? ' 🔒' : '');
+        if (x.tipo === 'cita' || pasada) {
+          btn.disabled = true;
+          btn.title = x.tipo === 'cita' ? `Cita de ${x.cita.clienteNombre || 'cliente'}` : 'Hora pasada';
         } else {
+          btn.setAttribute('aria-pressed', String(bq.sel.has(x.hora)));
+          btn.addEventListener('click', () => {
+            if (bq.sel.has(x.hora)) bq.sel.delete(x.hora); else bq.sel.add(x.hora);
+            renderBloqueoHoras();
+          });
+        }
+        grid.appendChild(btn);
+      });
+
+      const elegidas = lista.filter(x => bq.sel.has(x.hora));
+      const nLibres = elegidas.filter(x => x.tipo === 'libre').length;
+      const nBloq = elegidas.filter(x => x.tipo === 'bloq').length;
+      $('btn-bq-guardar').disabled = !nLibres;
+      $('btn-bq-guardar').lastChild.textContent = nLibres ? ` Bloquear ${nLibres} hora${nLibres === 1 ? '' : 's'}` : ' Bloquear seleccionadas';
+      $('btn-bq-liberar').disabled = !nBloq;
+      $('btn-bq-liberar').lastChild.textContent = nBloq ? ` Desbloquear ${nBloq} hora${nBloq === 1 ? '' : 's'}` : ' Desbloquear seleccionadas';
+    }
+
+    async function guardarBloqueos(liberar) {
+      const lista = estadoHorasDia(bq.fecha).filter(x => bq.sel.has(x.hora) && x.tipo === (liberar ? 'bloq' : 'libre'));
+      if (!lista.length) return;
+      const res = $('bq-resultado');
+      res.className = 'bq-resultado';
+      res.textContent = 'Guardando…';
+      $('btn-bq-guardar').disabled = $('btn-bq-liberar').disabled = true;
+
+      const bien = [], mal = [];
+      for (const x of lista) {
+        try {
+          if (liberar) await Store.cambiarEstado(x.cita, 'cancelada');
+          else await Store.bloquear(estado.miBarberoId, bq.fecha, x.hora);
+          bien.push(formatoHora(x.hora));
+        } catch (err) {
           console.error(err);
-          avisar('No se pudo bloquear la hora.', 'error');
+          const motivo = err && err.message === 'OCUPADO' ? 'ya está ocupada' : (err && err.message) || 'error';
+          mal.push(`${formatoHora(x.hora)} (${motivo})`);
         }
       }
+      bq.sel.clear();
+      const accion = liberar ? 'Desbloqueadas' : 'Bloqueadas';
+      res.className = 'bq-resultado ' + (mal.length ? 'error' : 'ok');
+      res.textContent = (bien.length ? `${accion}: ${bien.join(', ')}` : '') +
+        (mal.length ? `${bien.length ? ' · ' : ''}No se pudo: ${mal.join(', ')}` : '');
+      avisar(mal.length ? `Algunas horas no se guardaron.` : `${accion} ${bien.length} hora${bien.length === 1 ? '' : 's'}.`, mal.length ? 'error' : 'info');
+      // El tiempo real actualiza la lista; mientras tanto se recarga a mano.
+      if (subCitas) subCitas.recargar();
+      renderBloqueoHoras();
     }
 
     /* ---------- Bloquear días de descanso ---------- */
@@ -2881,10 +3213,11 @@
       $('bdias-prev').addEventListener('click', () => $('bdia-strip').scrollBy({ left: -220, behavior: 'smooth' }));
       $('bdias-next').addEventListener('click', () => $('bdia-strip').scrollBy({ left: 220, behavior: 'smooth' }));
 
-      $('btn-bloquear').addEventListener('click', abrirBloqueo);
-      $('btn-bloq-cancelar').addEventListener('click', () => $('dlg-bloqueo').close());
-      $('bloq-fecha').addEventListener('change', actualizarHorasBloqueo);
-      $('form-bloqueo').addEventListener('submit', enviarBloqueo);
+      $('btn-bq-guardar').addEventListener('click', () => guardarBloqueos(false));
+      $('btn-bq-liberar').addEventListener('click', () => guardarBloqueos(true));
+      $('bqdias-prev').addEventListener('click', () => $('bq-strip').scrollBy({ left: -220, behavior: 'smooth' }));
+      $('bqdias-next').addEventListener('click', () => $('bq-strip').scrollBy({ left: 220, behavior: 'smooth' }));
+      $('btn-pago-cerrar').addEventListener('click', () => $('dlg-pago').close());
 
       $('btn-bloquear-dia').addEventListener('click', abrirBloqueoDia);
       $('btn-dia-cancelar').addEventListener('click', () => $('dlg-dia').close());
