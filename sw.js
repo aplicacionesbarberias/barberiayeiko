@@ -1,7 +1,7 @@
 // Service worker de Barbería Yeiko: permite instalar la app y abrirla rápido.
 // Las reservas y los horarios SIEMPRE se piden en vivo a Supabase (nunca se guardan aquí).
 // Si cambias index.html y no ves el cambio en el celular, sube el número de VERSION.
-const VERSION = 'yeiko-v2';
+const VERSION = 'yeiko-v3';
 const BASICOS = ['./', 'index.html', 'manifest.json', 'img/logo.png', 'img/logo-96.png', 'img/favicon-32.png', 'img/icon-192.png'];
 
 self.addEventListener('install', ev => {
