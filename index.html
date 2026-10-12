@@ -843,7 +843,7 @@
   <dialog id="dlg-cancelar" aria-labelledby="dlg-cancelar-titulo">
     <h3 id="dlg-cancelar-titulo">Cancelar cita</h3>
     <p class="hint" id="dlg-cancelar-detalle" style="color: var(--blanco);"></p>
-    <p class="hint">Al cliente le llega un aviso por correo y Telegram. La hora queda libre.</p>
+    <p class="hint" id="dlg-cancelar-nota">Al cliente le llega un aviso por correo y Telegram. La hora queda libre.</p>
     <div class="cancelar-opciones">
       <button type="button" class="btn btn-danger" id="btn-cancelar-pago"><i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Cancelar por falta de pago</button>
       <button type="button" class="btn btn-secondary" id="btn-cancelar-otro">Cancelar por otro motivo</button>
@@ -2837,6 +2837,8 @@
           }));
         }
         acciones.append(botonAccion('fa-solid fa-xmark', 'var(--peligro)', 'Cancelar cita', () => pedirCancelacion(c)));
+        // WhatsApp rojo: cancela y abre el chat del cliente con el mensaje de cancelación listo.
+        if (tel) acciones.append(botonAccion('fa-brands fa-whatsapp', 'var(--peligro)', 'Cancelar y avisar por WhatsApp', () => pedirCancelacion(c, true)));
       }
       if (est === 'completada') {
         acciones.append(botonAccion('fa-solid fa-rotate-left', 'var(--gris)', 'Volver a pendiente', () => actualizarCita(c, 'pendiente')));
@@ -2870,8 +2872,33 @@
     }
 
     // Ventana para cancelar: por falta de pago u otro motivo. Al cliente le llega el aviso.
-    function pedirCancelacion(c) {
+    // Mismo texto que le llega al cliente por Telegram cuando se cancela su cita.
+    function mensajeCancelacion(c, motivo) {
+      const primerNombre = (c.clienteNombre || '').trim().split(' ')[0] || 'Hola';
+      const porPago = motivo === 'falta_de_pago';
+      const barbero = (BARBEROS[c.barberoId] && BARBEROS[c.barberoId].nombre) || 'el barbero';
+      const razon = porPago ? 'fue cancelada por falta de pago.' : `fue cancelada por ${barbero}.`;
+      const nota = porPago
+        ? 'No recibimos el comprobante de pago a tiempo, así que la hora quedó libre. Si ya pagaste, escríbenos por aquí y lo revisamos. Puedes volver a reservar desde la app.'
+        : 'Si quieres otra hora, escríbenos por aquí o reserva de nuevo desde la app.';
+      const lineas = [
+        '❌ *Tu cita fue cancelada*', '',
+        `📅 ${formatoFechaLarga(c.fecha)}`,
+        `🕐 ${textoHoraCita(c.hora, c.turnos)}`
+      ];
+      const serv = textoServicio(c);
+      if (serv) lineas.push(`💈 ${serv}`);
+      lineas.push('', `${primerNombre}, tu cita ${razon} ${nota}`, '', location.origin + location.pathname.replace(/index\.html$/, ''));
+      return lineas.join('\n');
+    }
+
+    function pedirCancelacion(c, porWhatsapp = false) {
       const dlg = $('dlg-cancelar');
+      const tel = String(c.clienteTelefono || '').replace(/\D/g, '');
+      $('dlg-cancelar-titulo').textContent = porWhatsapp ? 'Cancelar y avisar por WhatsApp' : 'Cancelar cita';
+      $('dlg-cancelar-nota').textContent = porWhatsapp
+        ? 'Se abre el WhatsApp del cliente con el mensaje de cancelación listo: solo toca enviar. También le llega por correo y Telegram. La hora queda libre.'
+        : 'Al cliente le llega un aviso por correo y Telegram. La hora queda libre.';
       $('dlg-cancelar-detalle').textContent =
         `${c.clienteNombre || 'Cliente'} · ${formatoFechaLarga(c.fecha)}, ${textoHoraCita(c.hora, c.turnos)}`;
       $('btn-cancelar-pago').hidden = c.pagoEstado === 'pagado';
@@ -2879,8 +2906,14 @@
         $('btn-cancelar-pago').onclick = $('btn-cancelar-otro').onclick = $('btn-cancelar-volver').onclick = null;
         if (dlg.open) dlg.close();
       };
-      $('btn-cancelar-pago').onclick = () => { cerrar(); actualizarCita(c, 'cancelada', { motivo_cancelacion: 'falta_de_pago' }); };
-      $('btn-cancelar-otro').onclick = () => { cerrar(); actualizarCita(c, 'cancelada', { motivo_cancelacion: 'barbero' }); };
+      const cancelar = motivo => {
+        // WhatsApp se abre primero, dentro del toque, para que el celular no lo bloquee.
+        if (porWhatsapp && tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensajeCancelacion(c, motivo))}`, '_blank', 'noopener');
+        cerrar();
+        actualizarCita(c, 'cancelada', { motivo_cancelacion: motivo });
+      };
+      $('btn-cancelar-pago').onclick = () => cancelar('falta_de_pago');
+      $('btn-cancelar-otro').onclick = () => cancelar('barbero');
       $('btn-cancelar-volver').onclick = cerrar;
       dlg.showModal();
     }
